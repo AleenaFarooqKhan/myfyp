@@ -50,7 +50,6 @@ export default function RequestScreen() {
       longitude: destination?.longitude || 0,
     });
 
-    // Save recent search if both origin and destination are set
     if (origin && destination && origin.name && destination.name) {
       const saveRecentSearch = async () => {
         try {
@@ -60,14 +59,11 @@ export default function RequestScreen() {
           };
           let recent = await AsyncStorage.getItem("recentSearches");
           recent = recent ? JSON.parse(recent) : [];
-          // Remove duplicate if exists
           recent = recent.filter(
             (item) =>
               !(item.from === newSearch.from && item.to === newSearch.to)
           );
-          // Add new search to the front
           recent.unshift(newSearch);
-          // Keep only the last 2
           if (recent.length > 2) recent = recent.slice(0, 2);
           await AsyncStorage.setItem("recentSearches", JSON.stringify(recent));
         } catch (e) {
@@ -213,41 +209,44 @@ export default function RequestScreen() {
       </View>
 
       {/* Map View */}
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialRegion={{
-          latitude: userOrigin.latitude,
-          longitude: userOrigin.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        showsUserLocation
-        followsUserLocation
-      >
-        {userOrigin.latitude !== 0 && (
-          <Marker coordinate={userOrigin} title="From">
-            <Image
-              source={require("../../assets/from.png")}
-              style={{ width: 40, height: 40 }}
+      <View style={styles.mapContainer}>
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          initialRegion={{
+            latitude: userOrigin.latitude,
+            longitude: userOrigin.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          showsUserLocation
+          followsUserLocation
+        >
+          {userOrigin.latitude !== 0 && (
+            <Marker coordinate={userOrigin} title="From">
+              <Image
+                source={require("../../assets/from.png")}
+                style={{ width: 40, height: 40 }}
+              />
+            </Marker>
+          )}
+          {userDestination.latitude !== 0 && (
+            <Marker coordinate={userDestination} title="To" />
+          )}
+          {routeCoordinates.length > 0 && (
+            <Polyline
+              coordinates={routeCoordinates}
+              strokeWidth={4}
+              strokeColor="blue"
             />
-          </Marker>
-        )}
-        {userDestination.latitude !== 0 && (
-          <Marker coordinate={userDestination} title="To" />
-        )}
+          )}
+        </MapView>
+      </View>
 
-        {routeCoordinates.length > 0 && (
-          <Polyline
-            coordinates={routeCoordinates}
-            strokeWidth={4}
-            strokeColor="blue"
-          />
-        )}
-      </MapView>
-
-      {/* Bottom Sheet Placeholder */}
-      <BottomSheet>{/* You can add content here later */}</BottomSheet>
+      {/* Bottom Sheet */}
+      <BottomSheet>
+        {/* You can add content here later */}
+      </BottomSheet>
     </View>
   );
 }
@@ -255,13 +254,22 @@ export default function RequestScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
   },
   inputContainer: {
     backgroundColor: "white",
     padding: 16,
-    height: SCREEN_HEIGHT * 0.29,
+    height: SCREEN_HEIGHT * 0.34,
     justifyContent: "center",
     elevation: 5,
+    zIndex: 10, // Keep it above map
+  },
+  mapContainer: {
+    flex: 1,
+    overflow: "hidden",
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
   transitIcon: {
     width: 40,
@@ -290,36 +298,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -3,
     left: 0,
-    zIndex: 10,
+    zIndex: 20,
     padding: 5,
-  },
-  map: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT * 0.72,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    padding: 20,
-  },
-  requestButton: {
-    backgroundColor: colors.blue,
-    padding: 10,
-    borderRadius: 5,
-  },
-  offerButton: {
-    backgroundColor: colors.black,
-    padding: 10,
-    borderRadius: 5,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginVertical: 8,
-  },
-  buttonText: {
-    color: colors.white,
-    fontSize: 16,
   },
   text1: {
     fontSize: 14,

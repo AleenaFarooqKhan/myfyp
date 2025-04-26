@@ -104,7 +104,7 @@ export default function SignUpStep3() {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://192.168.100.61:3000/api/driver/register",
+        "http://192.168.100.9:3000/api/driver/register",
         formData,
         {
           headers: {

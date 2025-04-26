@@ -55,7 +55,7 @@ const SignUpAsPassenger = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.100.61:3000/api/passenger/register",
+        "http://192.168.100.9:3000/api/passenger/register",
         {
           username,
           phoneNumber,
