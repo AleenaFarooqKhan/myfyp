@@ -19,12 +19,12 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 const MENU_ITEMS = [
   { label: "Home", icon: <Icon name="car" size={22} color="#333" /> },
   {
-    label: "Request history",
-    icon: <Icon name="history" size={22} color="#333" />,
+    label: "Messages",
+    icon: <Icon name="message" size={22} color="#333" />,
   },
   {
     label: "Couriers",
-    icon: <FontAwesome name="truck" size={22} color="#333" />,
+    icon: <FontAwesome name="car" size={22} color="#333" />,
   },
   {
     label: "City to City",
@@ -86,16 +86,7 @@ const HamburgerMenuDialog = ({ visible, onClose }) => {
     // Add more navigation logic for other menu items if needed
   };
 
-  const handleModeSwitch = () => {
-    if (userRole === "driver") {
-      // Switch to passenger mode
-      navigation.navigate("HomeScreen");
-    } else {
-      // Switch to driver mode
-      navigation.navigate("DriverScreen");
-    }
-    onClose();
-  };
+ 
 
   return (
     <Modal
@@ -146,33 +137,13 @@ const HamburgerMenuDialog = ({ visible, onClose }) => {
             );
           })}
         </View>
-        <TouchableOpacity style={styles.modeButton} onPress={handleModeSwitch}>
-          <Text style={styles.modeButtonText}>
-            {userRole === "driver" ? "Passenger mode" : "Driver mode"}
-          </Text>
-        </TouchableOpacity>
-        <View style={styles.socialRow}>
-          <TouchableOpacity
-            onPress={() => Linking.openURL("https://facebook.com")}
-          >
-            <FontAwesome
-              name="facebook-square"
-              size={32}
-              color="#1877F3"
-              style={styles.socialIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => Linking.openURL("https://instagram.com")}
-          >
-            <FontAwesome
-              name="instagram"
-              size={32}
-              color="#E1306C"
-              style={styles.socialIcon}
-            />
-          </TouchableOpacity>
-        </View>
+        <View style={styles.modeButton}>
+  <Text style={styles.modeButtonText}>
+    {userRole === "driver" ? "Driver Mode" : "Passenger Mode"}
+  </Text>
+</View>
+
+ 
       </View>
     </Modal>
   );
@@ -259,7 +230,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 13,
     marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 27,
   },
   modeButtonText: {
     color: "#222",
