@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "fyp8",
+    "slug": "fyp8",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.Roam-Together",
+      "config": {
+        "googleMapsApiKey": "AIzaSyBqbSrUAVOzB8XxWLOS9nxADhSJszNlEkA"
+      }
+    },
+ "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.roamtogether.app",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBqbSrUAVOzB8XxWLOS9nxADhSJszNlEkA"
+        }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
+}
