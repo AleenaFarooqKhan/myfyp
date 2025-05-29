@@ -29,6 +29,11 @@ const driverSchema = new Schema(
       type: Date,
       required: true,
     },
+    vehicleType :{
+      type: String,
+      required: true,
+      enum: ["Mehran", "Alto", "Cultus", "Civic", "Corolla XLi", "Corolla GLi"],
+    },
     profilePicture: {
       type: String,
       required: true,
@@ -51,9 +56,11 @@ const driverSchema = new Schema(
       type: String,
       required: true,
     },
-    vehicleModel: {
-      type: Number,
+    iban: {
+      type: String,
       required: true,
+      unique: true,
+      match: /^PK[0-9]{2}[A-Z]{4}[0-9]{16}$/,
     },
   },
   {

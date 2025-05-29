@@ -1,7 +1,8 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import LottieView from 'lottie-react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -10,7 +11,12 @@ const SplashScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../../assets/car.png')} style={styles.image} />
+      <LottieView
+        source={require('../../assets/car-animation.json')}
+        autoPlay
+        loop
+        style={styles.animation}
+      />
       <Text style={styles.title}>Roam Together</Text>
       <Text style={styles.subtitle}>Travel Together{"\n"}Save Money</Text>
 
@@ -29,10 +35,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 50,
   },
-  image: {
+  animation: {
     width: width,
     height: height * 0.6,
-    resizeMode: 'cover',
   },
   title: {
     fontSize: 28,

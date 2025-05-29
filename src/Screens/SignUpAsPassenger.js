@@ -7,14 +7,16 @@ import {
   Image,
   StyleSheet,
   Alert,
-  ScrollView,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 
 const SignUpAsPassenger = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -26,126 +28,119 @@ const SignUpAsPassenger = () => {
 
   const validatePhone = (text) => {
     setPhoneNumber(text);
-    if (!text.match(/^\d{11}$/)) {
-      setPhoneError("Phone number must be 11 digits");
-    } else {
-      setPhoneError("");
-    }
+    setPhoneError(!text.match(/^\d{11}$/) ? "Phone number must be 11 digits" : "");
   };
 
   const validatePassword = (text) => {
     setPassword(text);
-    if (text.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
-    } else {
-      setPasswordError("");
-    }
+    setPasswordError(text.length < 6 ? "Password must be at least 6 characters" : "");
   };
 
   const handleSignUp = async () => {
     if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
-      return;
+      return Alert.alert("Error", "Passwords do not match");
     }
 
     if (phoneError || passwordError) {
-      Alert.alert("Error", "Please fix the errors before submitting");
-      return;
+      return Alert.alert("Error", "Please fix the errors before submitting");
     }
 
     try {
-      const response = await axios.post(
-        "http://192.168.100.9:3000/api/passenger/register",
-        {
-          username,
-          phoneNumber,
-          password,
-        }
-      );
-      alert("sucessfully");
+      setIsLoading(true);
+      await axios.post("${API_BASE_URL}/api/passenger/register", {
+        username,
+        email,
+        phoneNumber,
+        password,
+      });
+
+      // Navigate to OTP verification screen with email
+      navigation.navigate("VerifyEmailOTP", { email });
+
     } catch (error) {
-      console.log("Login Error:", error);
-      Alert.alert(
-        "Login Failed",
-        error.response?.data?.message || "Something went wrong."
-      );
+      setIsLoading(false);
+      Alert.alert("Sign Up Failed", error.response?.data?.message || "Something went wrong.");
     }
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <View style={styles.topContainer}>
-          <Image
-            source={require("../../assets/carr.jpg")}
-            style={styles.image}
-          />
-          <Text style={styles.title}>Roam Together</Text>
-          <Text style={styles.subtitle}>Passenger SignUp</Text>
-        </View>
-
-        <View style={styles.formContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            placeholderTextColor="#888"
-            value={username}
-            onChangeText={setUsername}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Phone Number"
-            placeholderTextColor="#888"
-            value={phoneNumber}
-            onChangeText={validatePhone}
-            keyboardType="phone-pad"
-          />
-          {phoneError ? <Text style={styles.error}>{phoneError}</Text> : null}
-
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#888"
-            secureTextEntry
-            value={password}
-            onChangeText={validatePassword}
-          />
-          {passwordError ? (
-            <Text style={styles.error}>{passwordError}</Text>
-          ) : null}
-
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            placeholderTextColor="#888"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleSignUp}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Sign Up</Text>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => navigation.navigate("LoginAsPassenger")}
-          >
-            <Text style={styles.signUpText}>
-              Already have an account? Log in
-            </Text>
-          </TouchableOpacity>
-        </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <View style={styles.top}>
+        <Image
+          source={require("../../assets/carr.jpg")}
+          style={styles.image}
+        />
+        <Text style={styles.title}>Roam Together</Text>
+        <Text style={styles.subtitle}>Passenger SignUp</Text>
       </View>
-    </ScrollView>
+
+      <View style={styles.form}>
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+        <TextInput
+  style={styles.input}
+  placeholder="Email"
+  placeholderTextColor="#888"
+  value={email}
+  onChangeText={validateEmail}
+/>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Phone Number"
+          value={phoneNumber}
+          onChangeText={validatePhone}
+          keyboardType="phone-pad"
+        />
+        {phoneError ? <Text style={styles.error}>{phoneError}</Text> : null}
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={validatePassword}
+          secureTextEntry
+        />
+        {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSignUp}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Sign Up</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Link to Login Screen if user already has an account */}
+        <TouchableOpacity onPress={() => navigation.navigate("LoginAsPassenger")}>
+          <Text style={styles.linkText}>Already have an account? Log in</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -154,80 +149,73 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#57A9FF",
   },
-  topContainer: {
+  top: {
+    flex: 0.35,
     alignItems: "center",
-    paddingVertical: 40,
-    backgroundColor: "#57A9FF",
+    justifyContent: "center",
+    paddingTop: 20,
+  },
+  form: {
+    flex: 0.65,
+    backgroundColor: "#F8F9FA",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
   image: {
-    width: 250,
-    height: 180,
+    width: 170,
+    height: 100,
     resizeMode: "contain",
-    marginBottom: 10,
-    borderRadius: 15,
+    borderRadius: 10,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: "bold",
     color: "#fff",
+    marginTop: 8,
   },
   subtitle: {
     fontSize: 16,
     color: "#fff",
-    textAlign: "center",
-    marginVertical: 5,
-  },
-  formContainer: {
-    backgroundColor: "#F8F9FA",
-    paddingHorizontal: 20,
-    paddingTop: 30,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    flex: 1,
-    alignItems: "center",
+    marginTop: 2,
   },
   input: {
+    width: "92%",
+    height: 52,
     backgroundColor: "#fff",
-    borderRadius: 25,
-    padding: 15,
-    width: "90%",
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    marginVertical: 8,
     fontSize: 16,
-    marginVertical: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
-  },
-  error: {
-    color: "red",
-    fontSize: 14,
-    marginBottom: 5,
-    alignSelf: "flex-start",
-    paddingLeft: 30,
+    elevation: 1,
   },
   button: {
     backgroundColor: "#007AFF",
-    padding: 15,
+    height: 50,
+    justifyContent: "center",
     borderRadius: 25,
+    width: "92%",
+    marginTop: 16,
     alignItems: "center",
-    width: "90%",
-    marginTop: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 18,
     fontWeight: "bold",
+    fontSize: 17,
   },
-  signUpText: {
-    textAlign: "center",
-    marginTop: 5,
+  error: {
+    color: "red",
+    fontSize: 13,
+    alignSelf: "flex-start",
+    paddingLeft: 25,
+    marginTop: -4,
+  },
+  linkText: {
+    marginTop: 12,
+    fontSize: 15,
     color: "#007AFF",
-    fontSize: 16,
-    alignSelf: "center",
   },
 });
 

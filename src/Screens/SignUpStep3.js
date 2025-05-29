@@ -11,19 +11,22 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import { API_BASE_URL } from "../config/api"; // Adjust the import path as needed
 
 export default function SignUpStep3() {
   const navigation = useNavigation();
   const route = useRoute();
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
+  const [iban, setIban] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleFinish = async () => {
-    if (!password || !confirmPassword || !phoneNumber || !email) {
+    if (!password || !confirmPassword || !phoneNumber || !email || !iban) {
       setError("Please fill in all fields.");
       return;
     }
@@ -49,6 +52,11 @@ export default function SignUpStep3() {
       return;
     }
 
+    if (!iban.match(/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/)) {
+      setError("Invalid IBAN format.");
+      return;
+    }
+
     const step1Data = route?.params?.step1Data;
     const step2Data = route?.params?.step2Data;
 
@@ -63,10 +71,10 @@ export default function SignUpStep3() {
       phoneNumber,
       password,
       email,
+      iban,
     };
 
     const formData = new FormData();
-
     formData.append("firstName", userData.firstName);
     formData.append("lastName", userData.lastName);
     formData.append("dob", userData.dob);
@@ -75,6 +83,7 @@ export default function SignUpStep3() {
     formData.append("email", email);
     formData.append("licenseNumber", userData.licenseNumber);
     formData.append("vehicleModel", userData.vehicleModel);
+    formData.append("iban", iban);
 
     if (
       userData.profilePicture &&
@@ -104,7 +113,7 @@ export default function SignUpStep3() {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://192.168.100.9:3000/api/driver/register",
+        `${API_BASE_URL}/api/passenger/register`,
         formData,
         {
           headers: {
@@ -197,6 +206,20 @@ export default function SignUpStep3() {
         }}
       />
 
+      {/* IBAN Section */}
+      <Text style={styles.sectionTitle}>Bank Information</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter IBAN"
+        value={iban}
+        onChangeText={(text) => {
+          setIban(text.toUpperCase());
+          setError("");
+        }}
+        autoCapitalize="characters"
+        maxLength={34}
+      />
+
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <TouchableOpacity style={styles.finishButton} onPress={handleFinish}>
@@ -265,5 +288,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     marginRight: 5,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+    marginTop: 20,
+    marginBottom: 10,
   },
 });

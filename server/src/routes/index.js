@@ -56,3 +56,5 @@ passengerRouter.route("/login").post(loginInPassenger);
 passengerRouter.route("/logout").post(logOutPassenger);
 passengerRouter.route("/all-passengers").get(allPassengers);
 export { passengerRouter };
+
+

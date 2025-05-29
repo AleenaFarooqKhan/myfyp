@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,18 +12,20 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { Picker } from "@react-native-picker/picker";
 
 export default function SignUpStep2() {
   const navigation = useNavigation();
   const route = useRoute();
-  const step1Data = route.params?.step1Data || {}; // Add fallback to avoid undefined
+  const step1Data = route.params?.step1Data || {};
 
-  const [vehicleModel, setVehicleModel] = useState("");
+  const [vehicleType, setVehicleType] = useState("");
   const [licenseNumber, setlicenseNumber] = useState("");
   const [vehicleFrontPicture, setvehicleFrontPicture] = useState(null);
   const [licenseCertificatePicture, setlicenseCertificatePicture] = useState(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
   const captureImage = async (setImage, field) => {
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -31,8 +33,7 @@ export default function SignUpStep2() {
         Alert.alert("Permission Required", "Camera permission is needed to take photos");
         return;
       }
- 
-      
+
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -40,7 +41,7 @@ export default function SignUpStep2() {
         quality: 0.8,
       });
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
+      if (!result.canceled && result.assets?.length > 0) {
         const imageUri = result.assets[0].uri;
         setImage(imageUri);
         setErrors((prev) => ({ ...prev, [field]: false }));
@@ -53,7 +54,7 @@ export default function SignUpStep2() {
 
   const handleNext = () => {
     const newErrors = {
-      vehicleModel: !vehicleModel.trim(),
+      vehicleType: !vehicleType,
       licenseNumber: !licenseNumber.trim(),
       vehicleFrontPicture: !vehicleFrontPicture,
       licenseCertificatePicture: !licenseCertificatePicture,
@@ -73,7 +74,7 @@ export default function SignUpStep2() {
       navigation.navigate("SignUpStep3", {
         step1Data,
         step2Data: {
-          vehicleModel: vehicleModel.trim(),
+          vehicleType,
           licenseNumber: licenseNumber.trim(),
           vehicleFrontPicture,
           licenseCertificatePicture,
@@ -94,17 +95,31 @@ export default function SignUpStep2() {
       <Text style={styles.subtitle}>Vehicle Information</Text>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Vehicle Model</Text>
-        <TextInput
-          style={[styles.input, errors.vehicleModel && styles.inputError]}
-          placeholder="Enter vehicle model"
-          placeholderTextColor="#A9A9A9"
-          value={vehicleModel}
-          onChangeText={(text) => {
-            setVehicleModel(text);
-            setErrors((prev) => ({ ...prev, vehicleModel: false }));
-          }}
-        />
+        <Text style={styles.label}>Vehicle Type</Text>
+        <View
+          style={[
+            styles.dropdownWrapper,
+            errors.vehicleType && styles.inputError,
+          ]}
+        >
+          <Picker
+            selectedValue={vehicleType}
+            onValueChange={(itemValue) => {
+              setVehicleType(itemValue);
+              setErrors((prev) => ({ ...prev, vehicleType: false }));
+            }}
+            style={styles.dropdown}
+            dropdownIconColor="#333"
+          >
+            <Picker.Item label="Select Vehicle Type" value="" color="#A9A9A9" />
+            <Picker.Item label="Mehran" value="Mehran" />
+            <Picker.Item label="Alto" value="Alto" />
+            <Picker.Item label="Cultus" value="Cultus" />
+            <Picker.Item label="Civic" value="Civic" />
+            <Picker.Item label="Corolla XLi" value="Corolla XLi" />
+            <Picker.Item label="Corolla GLi" value="Corolla GLi" />
+          </Picker>
+        </View>
       </View>
 
       <View style={styles.inputContainer}>
@@ -214,6 +229,15 @@ const styles = StyleSheet.create({
   inputError: {
     borderWidth: 2,
     borderColor: "red",
+  },
+  dropdownWrapper: {
+    backgroundColor: "#E3F2FD",
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  dropdown: {
+    height: 50,
+    color: "#333",
   },
   scanButton: {
     flexDirection: "row",

@@ -1,28 +1,33 @@
 import { passengerModel } from "../models/passengers.models.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { otpEmail } from "../services/Mailer.js";
 export const registerPassenger = async (req, res) => {
   try {
-    const { username, phoneNumber, password } = req.body;
-    console.log("data recieve")
-    if (!username || !phoneNumber || !password) {
+    const { email, username, phoneNumber, password } = req.body;
+    if (!username || !phoneNumber || !password || !email) {
       return res.status(407).json({ message: "Not all details are provided" });
     }
     const exsitingPassenger = await passengerModel.findOne({
-      phoneNumber
+      $or: [{ email }, { phoneNumber }],
     });
 
     if (exsitingPassenger) {
       return res
         .status(400)
-        .json({ message: " Phone number already taken" });
+        .json({ message: "Phone or email number already taken" });
     }
     const hashedPassword = await bcryptjs.hash(password, 10);
+    const otp = Math.floor(Math.random() * 100000);
     const newPassenger = await passengerModel.create({
       username,
       phoneNumber,
+      email,
       password: hashedPassword,
+      userOTP:otp
     });
+
+    await otpEmail(email, username, otp);
     res.status(201).json({ message: "Passenger created", newPassenger });
   } catch (error) {
     console.log(error.message);
@@ -45,6 +50,12 @@ export const loginInPassenger = async (req, res) => {
     );
     if (!isPasswordValid) {
       return res.status(407).json({ message: "Invalid Password" });
+    }
+    const isConfirmed = passenger.isConfirmed;
+    if (!isConfirmed) {
+      return res
+        .status(407)
+        .json({ message: "Your account is not confirmed yet." });
     }
     const token = jwt.sign(
       { id: passenger._id },
@@ -87,5 +98,31 @@ export const allPassengers = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const verifyOtp = async (req, res) => {
+  console.log("request recieved");
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+    const passenger = await passengerModel.findOne({ email });
+    if (!passenger) {
+      return res.status(400).json({ message: "Passenger not found" });
+    }
+    const isValidOTP = String(otp) === String(passenger.userOTP);
+    if (!isValidOTP) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+    passenger.isConfirmed = true;
+    await passenger.save();
+    return res
+      .status(200)
+      .json({ success: true, message: "Your account is confirmed" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

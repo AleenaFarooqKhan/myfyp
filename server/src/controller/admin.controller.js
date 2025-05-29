@@ -3,6 +3,7 @@ import bcryptjs from "bcryptjs";
 import { uploadOnCloudinary } from "../services/uploadOnCloudinary.js";
 import jwt from "jsonwebtoken";
 import { driverModels } from "../models/drivers.models.js";
+import { approvalEmail, rejectionEmail } from "../services/Mailer.js";
 export const registerAdmin = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
@@ -96,6 +97,10 @@ export const approveDriver = async (req, res) => {
     }
     driver.status = "approved";
     await driver.save();
+    approvalEmail
+      (driver.email,
+      driver.fullName,
+    )
     return res.status(200).json({ message: "driver approved", driver });
   } catch (error) {
     console.error("approval error:", error);
@@ -113,6 +118,10 @@ export const rejectDriver = async (req, res) => {
     if (!driver) {
       return res.status(404).json({ message: "No driver found" });
     }
+    rejectionEmail(
+      driver.email,
+      driver.fullName,
+    )
     return res.status(200).json({ message: "Driver Deleted", driver });
   } catch (error) {
     console.error("Rejecting error:", error);
