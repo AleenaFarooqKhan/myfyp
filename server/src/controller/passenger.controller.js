@@ -1,7 +1,7 @@
 import { passengerModel } from "../models/passengers.models.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { otpEmail } from "../services/Mailer.js";
+import { otpEmail } from "../services/mailer.js";
 export const registerPassenger = async (req, res) => {
   try {
     const { email, username, phoneNumber, password } = req.body;

@@ -3,7 +3,7 @@ import bcryptjs from "bcryptjs";
 import { uploadOnCloudinary } from "../services/uploadOnCloudinary.js";
 import jwt from "jsonwebtoken";
 import { driverModels } from "../models/drivers.models.js";
-import { approvalEmail, rejectionEmail } from "../services/Mailer.js";
+import { approvalEmail, rejectionEmail } from "../services/mailer.js";
 export const registerAdmin = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
