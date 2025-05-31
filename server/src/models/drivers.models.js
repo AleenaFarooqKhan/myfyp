@@ -32,7 +32,6 @@ const driverSchema = new Schema(
     vehicleType :{
       type: String,
       required: true,
-      enum: ["Mehran", "Alto", "Cultus", "Civic", "Corolla XLi", "Corolla GLi"],
     },
     profilePicture: {
       type: String,

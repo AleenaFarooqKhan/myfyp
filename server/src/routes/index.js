@@ -16,14 +16,23 @@ import {
   signInDriver,
 } from "../controller/drivers.controller.js";
 import {
+  sendOTP,
+  verifyOTP,
+  resetPassword,
+}  from"../controller/Forgotpassword.controller.js";
+import {
   allPassengers,
   loginInPassenger,
   logOutPassenger,
   registerPassenger,
 } from "../controller/passenger.controller.js";
+import pkg from 'jsonwebtoken';
+const { verify } = pkg;
+
 const userRouter = Router();
 const driverRouter = Router();
 const passengerRouter = Router();
+
 
 userRouter
   .route("/register")
@@ -49,6 +58,10 @@ driverRouter.route("/login").post(signInDriver);
 driverRouter.route("/logout").post(logOutDriver);
 driverRouter.route("/approved-drivers").get(getAllDrivers);
 driverRouter.route("/pending-drivers").get(getPendingDrivers);
+driverRouter.route('/send-otp').post( sendOTP);
+driverRouter.route('/verify-otp').post( verifyOTP);
+driverRouter.route('/reset-password').post( resetPassword);
+
 export { driverRouter };
 
 passengerRouter.route("/register").post(registerPassenger);

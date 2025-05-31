@@ -84,6 +84,7 @@ export default function SignUpStep3() {
     formData.append("licenseNumber", userData.licenseNumber);
     formData.append("vehicleModel", userData.vehicleModel);
     formData.append("iban", iban);
+    formData.append("vehicleType", userData.vehicleType); 
 
     if (
       userData.profilePicture &&
@@ -113,7 +114,7 @@ export default function SignUpStep3() {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${API_BASE_URL}/api/passenger/register`,
+        `${API_BASE_URL}/api/driver/register`,
         formData,
         {
           headers: {

@@ -1,25 +1,24 @@
 import { driverModels } from "../models/drivers.models.js";
-import { registrationEmail } from "../services/Mailer.js";
+// import { registrationEmail } from "../services/Mailer.js";
 import { uploadOnCloudinary } from "../services/uploadOnCloudinary.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const registerDriver = async (req, res) => {
-  console.log("received req o");
   try {
-    console.log("received req");
+    console.log(req.body);
     const {
       firstName,
       lastName,
       password,
       phoneNumber,
-      email, // ✅ Added missing email
-      ibanNumber,
+      email, // 
       dob,
       licenseNumber,
       vehicleType,
+      iban
     } = req.body;
-
+     console.log(req.body);
     if (
       !firstName ||
       !lastName ||
@@ -27,8 +26,8 @@ export const registerDriver = async (req, res) => {
       !phoneNumber ||
       !email || // ✅ Added to validation
       !dob ||
-      !licenseNumber ||
-      !vehicleType
+      !licenseNumber 
+      // !vehicleType
     ) {
       return res.status(400).json({ message: "Details missing" });
     }
@@ -87,7 +86,7 @@ export const registerDriver = async (req, res) => {
       password: hashedPassword,
       phoneNumber,
       email,
-      ibanNumber, // ✅ Optional - if required
+      iban, 
       dob: new Date(dob),
       licenseNumber,
       vehicleType: normalizedVehicleType,
@@ -97,7 +96,7 @@ export const registerDriver = async (req, res) => {
       status: "pending",
     });
 
-    registrationEmail(email, firstName);
+    // registrationEmail(email, firstName);
     res.status(200).json({
       message: "Registration complete. You can login after approval",
       newDriver,
@@ -106,6 +105,8 @@ export const registerDriver = async (req, res) => {
     console.log(error.message);
     console.log("error 4");
     res.status(500).json({ message: "Internal server error" });
+  }finally{
+    console.log("uhu")
   }
 };
 

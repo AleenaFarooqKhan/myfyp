@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 const SignUpAsPassenger = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -47,7 +48,7 @@ const SignUpAsPassenger = () => {
 
     try {
       setIsLoading(true);
-      await axios.post("${API_BASE_URL}/api/passenger/register", {
+      await axios.post(`${API_BASE_URL}/api/passenger/register`, {
         username,
         email,
         phoneNumber,
@@ -91,13 +92,6 @@ const SignUpAsPassenger = () => {
           onChangeText={setEmail}
           keyboardType="email-address"
         />
-        <TextInput
-  style={styles.input}
-  placeholder="Email"
-  placeholderTextColor="#888"
-  value={email}
-  onChangeText={validateEmail}
-/>
 
         <TextInput
           style={styles.input}

@@ -44,6 +44,8 @@ app.use("/api/passenger", passengerRouter);
 import profileRouter from "./src/routes/profile.router.js";
 app.use('/api/profile', profileRouter);
 
+
+
 // Get messages between 2 users
 app.get("/api/messages/:user1/:user2", async (req, res) => {
   const { user1, user2 } = req.params;

@@ -101,6 +101,7 @@ const LoginAsPassenger = () => {
       }
     } catch (error) {
       console.log("Login Error:", error);
+      console.log("Login Error:", error.message);
       
       if (error.message === "Passenger logged in") {
         console.log("Detected successful login despite error format");

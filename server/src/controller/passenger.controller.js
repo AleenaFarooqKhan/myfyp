@@ -51,12 +51,12 @@ export const loginInPassenger = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(407).json({ message: "Invalid Password" });
     }
-    const isConfirmed = passenger.isConfirmed;
-    if (!isConfirmed) {
-      return res
-        .status(407)
-        .json({ message: "Your account is not confirmed yet." });
-    }
+    // const isConfirmed = passenger.isConfirmed;
+    // if (!isConfirmed) {
+    //   return res
+    //     .status(407)
+    //     .json({ message: "Your account is not confirmed yet." });
+    // }
     const token = jwt.sign(
       { id: passenger._id },
       process.env.JWT_TOKEN_SECRET,

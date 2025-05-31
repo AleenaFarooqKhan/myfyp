@@ -4,7 +4,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { LocationProviders } from "./src/Context/Context";
 import { StripeProvider } from "@stripe/stripe-react-native";
 
-// Import screens (same as yours)
+// Import screens
+import ResetPassword from "./src/Screens/ResetPassword";
 import SplashScreen from "./src/Screens/SplashScreen";
 import ProfileSetUpScreen from "./src/Screens/ProfileSetUpScreen";
 import LoginAsDriver from "./src/Screens/LoginAsDriver";
@@ -14,6 +15,7 @@ import SignUpStep1 from "./src/Screens/SignUpStep1";
 import SignUpStep2 from "./src/Screens/SignUpStep2";
 import SignUpStep3 from "./src/Screens/SignUpStep3";
 import HomeScreen from "./src/Screens/HomeScreen";
+import ForgotPassword from "./src/Screens/ForgotPassword";
 import RequestScreen from "./src/Screens/RequestScreen";
 import DestinationScreen from "./src/Screens/DestinationScreen";
 import DriverScreen from "./src/Screens/DriverScreen";
@@ -31,24 +33,18 @@ import VerifyEmailOTP from "./src/Screens/VerifyEmailOTP";
 
 const Stack = createStackNavigator();
 
-// Put your actual Stripe test/live publishable key here:
+// Replace with your real Stripe key
 const STRIPE_PUBLISHABLE_KEY = "pk_test_XXXXXXXXXXXXXXXXXXXXXXXX";
 
 export default function App() {
   return (
     <LocationProviders>
-      <StripeProvider
-        publishableKey={STRIPE_PUBLISHABLE_KEY}
-        // merchantIdentifier prop is NOT set to avoid the undefined error.
-        // Uncomment and configure ONLY if you are ready for Apple Pay.
-        // merchantIdentifier="merchant.com.yourapp"
-      >
+      <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName="SplashScreen"
             screenOptions={{ headerShown: false }}
           >
-            {/* Your screens */}
             <Stack.Screen name="SplashScreen" component={SplashScreen} />
             <Stack.Screen name="ProfileSetUpScreen" component={ProfileSetUpScreen} />
             <Stack.Screen name="LoginAsDriver" component={LoginAsDriver} />
@@ -62,7 +58,11 @@ export default function App() {
             <Stack.Screen name="BookingConfirmation" component={BookingConfirmation} />
             <Stack.Screen name="DestinationScreen" component={DestinationScreen} />
             <Stack.Screen name="DriverScreen" component={DriverScreen} />
-             <Stack.Screen name="VerifyEmailOTP" component={VerifyEmailOTP} />
+            <Stack.Screen name="VerifyEmailOTP" component={VerifyEmailOTP} />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPassword}
+            />
             <Stack.Screen name="OfferingCarpool" component={OfferingCarpool} />
             <Stack.Screen
               name="AvailableCarpools"
@@ -76,6 +76,7 @@ export default function App() {
             <Stack.Screen name="Safety" component={Safety} />
             <Stack.Screen name="Notifications" component={Notifications} />
             <Stack.Screen name="Messages" component={Messages} />
+            <Stack.Screen name="ResetPassword" component={ResetPassword} />
           </Stack.Navigator>
         </NavigationContainer>
       </StripeProvider>
