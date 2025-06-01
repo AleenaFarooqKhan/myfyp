@@ -1,7 +1,7 @@
 
 import { View, Text, StyleSheet } from 'react-native';
 
-const Messages = () => {
+const MessagesDriver = () => {
   return (
     <View style={styles.container}>
       <Text>Messages Screen 📩</Text>
@@ -18,4 +18,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Messages;
+export default MessagesDriver;

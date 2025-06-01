@@ -41,8 +41,6 @@ app.use("/api/driver", driverRouter);
 import { passengerRouter } from "./src/routes/index.js";
 app.use("/api/passenger", passengerRouter);
 
-import profileRouter from "./src/routes/profile.router.js";
-app.use('/api/profile', profileRouter);
 
 
 

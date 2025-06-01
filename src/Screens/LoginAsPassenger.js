@@ -29,7 +29,7 @@ const LoginAsPassenger = () => {
   const [phoneError, setPhoneError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false); // <-- added state
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const validatePhone = (text) => {
     setPhoneNumber(text);
@@ -50,14 +50,13 @@ const LoginAsPassenger = () => {
   };
 
   const handleLogin = async () => {
-    console.log("Login button clicked");
     if (phoneError || passwordError || !phoneNumber || !password) {
       Alert.alert("Error", "Please fill all fields correctly");
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     try {
       const response = await axios.post(
         `${API_BASE_URL}/api/passenger/login`,
@@ -66,22 +65,20 @@ const LoginAsPassenger = () => {
           password,
         }
       );
-  
-      console.log("Login response:", response.data);
-  
+
       if (response.data && response.data.passenger) {
         const tempToken = `temp_${Date.now()}_${response.data.passenger._id}`;
         await AsyncStorage.setItem("authToken", tempToken);
         await AsyncStorage.setItem("userId", response.data.passenger._id);
         await AsyncStorage.setItem("userName", response.data.passenger.username);
         await AsyncStorage.setItem("userRole", "passenger");
-        
+
         const pendingBooking = await AsyncStorage.getItem("pendingBooking");
-        
+
         if (returnToBooking && pendingBooking) {
           const bookingData = JSON.parse(pendingBooking);
           await AsyncStorage.removeItem("pendingBooking");
-          
+
           Alert.alert("Success", "Login successful! Returning to your booking.", [
             {
               text: "Continue",
@@ -100,32 +97,10 @@ const LoginAsPassenger = () => {
         throw new Error("Invalid login response format");
       }
     } catch (error) {
-      console.log("Login Error:", error);
-      console.log("Login Error:", error.message);
-      
-      if (error.message === "Passenger logged in") {
-        console.log("Detected successful login despite error format");
-        
-        const passengerId = error.response?.data?.passenger?._id || "unknown_id";
-        const username = error.response?.data?.passenger?.username || "User";
-        
-        await AsyncStorage.setItem("authToken", `temp_${Date.now()}_${passengerId}`);
-        await AsyncStorage.setItem("userId", passengerId);
-        await AsyncStorage.setItem("userName", username);
-        await AsyncStorage.setItem("userRole", "passenger");
-        
-        Alert.alert("Success", "Logged in successfully!", [
-          {
-            text: "Continue",
-            onPress: () => navigation.navigate("HomeScreen"),
-          },
-        ]);
-      } else {
-        Alert.alert(
-          "Login Failed",
-          error.response?.data?.message || error.message || "Something went wrong."
-        );
-      }
+      Alert.alert(
+        "Login Failed",
+        error.response?.data?.message || error.message || "Something went wrong."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -135,28 +110,15 @@ const LoginAsPassenger = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0} // Adjust this if you have a header
+      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
           <StatusBar backgroundColor="#1E90FF" barStyle="light-content" />
           <View style={styles.topContainer}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Feather
-                  name="arrow-left"
-                  size={28}
-                  color="#fff"
-                  style={{
-                    position: "absolute",
-                    top: -5,
-                    left: 8,
-                    zIndex: 10,
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
-
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: "absolute", top: 10, left: 8, zIndex: 10 }}>
+              <Feather name="arrow-left" size={28} color="#fff" />
+            </TouchableOpacity>
             <Image source={require("../../assets/carr.jpg")} style={styles.image} />
             <Text style={styles.title}>Roam Together</Text>
             <Text style={styles.subtitle}>Passenger Login</Text>
@@ -173,13 +135,12 @@ const LoginAsPassenger = () => {
             />
             {phoneError ? <Text style={styles.error}>{phoneError}</Text> : null}
 
-            {/* Password container with eye icon */}
             <View style={styles.passwordContainer}>
               <TextInput
                 style={styles.passwordInput}
                 placeholder="Password"
                 placeholderTextColor="#888"
-                secureTextEntry={!passwordVisible} // toggle secureTextEntry
+                secureTextEntry={!passwordVisible}
                 value={password}
                 onChangeText={validatePassword}
                 autoCapitalize="none"
@@ -188,14 +149,20 @@ const LoginAsPassenger = () => {
                 onPress={() => setPasswordVisible(!passwordVisible)}
                 style={styles.eyeIcon}
               >
-                <Feather
-                  name={passwordVisible ? "eye" : "eye-off"}
-                  size={22}
-                  color="#888"
-                />
+                <Feather name={passwordVisible ? "eye" : "eye-off"} size={22} color="#888" />
               </TouchableOpacity>
             </View>
             {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
+
+            {/* Forgot Password link */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ForgotPassword")}
+              style={{ alignSelf: "flex-end", paddingRight: 20, marginBottom: 10 }}
+            >
+              <Text style={{ color: "#007AFF", fontSize: 14, fontWeight: "600" }}>
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, isLoading && { opacity: 0.6 }]}

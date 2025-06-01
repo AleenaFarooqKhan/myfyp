@@ -103,7 +103,7 @@ export const approveDriver = async (req, res) => {
     )
     return res.status(200).json({ message: "driver approved", driver });
   } catch (error) {
-    console.error("approval error:", error);
+    console.log("approval error:", error);
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };

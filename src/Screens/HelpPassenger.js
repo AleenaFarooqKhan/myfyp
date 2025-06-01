@@ -1,10 +1,10 @@
 
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, } from 'react-native';
 
-const Notifications = () => {
+const Help = () => {
   return (
     <View style={styles.container}>
-      <Text>Messages Screen 📩</Text>
+      <Text>help passsenger 📩</Text>
     </View>
   );
 };
@@ -18,4 +18,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Notifications;
+export default Help;

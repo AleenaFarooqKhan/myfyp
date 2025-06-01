@@ -8,15 +8,15 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { API_BASE_URL } from '../config/api'; // Make sure this is correct
 
-const ResetPassword = ({ route, navigation }) => {
-  const { email } = route.params; // Email passed from previous screen
+const ResetPasswordForPassenger = ({ route, navigation }) => {
+  const { email } = route.params;
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleResetPassword = async () => {
-    // Basic validation
     if (!password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
@@ -30,9 +30,9 @@ const ResetPassword = ({ route, navigation }) => {
       return;
     }
 
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await fetch('${API_BASE_URL}/api/forgot-password/reset-password', {
+      const response = await fetch(`${API_BASE_URL}/api/passenger/forgot-password/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -41,11 +41,11 @@ const ResetPassword = ({ route, navigation }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to reset password');
+        throw new Error(data.message || 'Failed to reset password.');
       }
 
       Alert.alert('Success', 'Password reset successfully.');
-      navigation.navigate('Login'); // Navigate to login or other screen
+      navigation.navigate('LoginAsPassenger');
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
@@ -92,7 +92,7 @@ const ResetPassword = ({ route, navigation }) => {
   );
 };
 
-export default ResetPassword;
+export default ResetPasswordForPassenger;
 
 const styles = StyleSheet.create({
   container: {

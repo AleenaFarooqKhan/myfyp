@@ -3,7 +3,12 @@ import {
   registerDriver,
   signInDriver,
   logOutDriver,
-  findDriverByPhoneNumber
+  findDriverByPhoneNumber,
+  resetPassword,
+  sendOTP,
+  verifyOTP,
+
+
 } from "../controller/drivers.controller.js";
 import{ upload} from "../middleware/multer.js"; // ✅ Make sure this path is correct
 
@@ -20,5 +25,8 @@ router.post("/register", upload.fields([
 router.post("/login", signInDriver);
 router.post("/logout", logOutDriver);
 router.get("/findByPhoneNumber/:phoneNumber", findDriverByPhoneNumber);
+router.post("/reset-password", resetPassword);
+router.post("/send-otp", sendOTP);    
+router.post("/verify-otp", verifyOTP);
 
 export default router;

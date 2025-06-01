@@ -4,8 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { LocationProviders } from "./src/Context/Context";
 import { StripeProvider } from "@stripe/stripe-react-native";
 
-// Import screens
-import ResetPassword from "./src/Screens/ResetPassword";
+// Import your screens including role-specific ones
 import SplashScreen from "./src/Screens/SplashScreen";
 import ProfileSetUpScreen from "./src/Screens/ProfileSetUpScreen";
 import LoginAsDriver from "./src/Screens/LoginAsDriver";
@@ -16,6 +15,8 @@ import SignUpStep2 from "./src/Screens/SignUpStep2";
 import SignUpStep3 from "./src/Screens/SignUpStep3";
 import HomeScreen from "./src/Screens/HomeScreen";
 import ForgotPassword from "./src/Screens/ForgotPassword";
+import ResetPasswordForDriver from "./src/Screens/ResetPasswordForDriver";
+import ResetPasswordForPassenger from "./src/Screens/ResetPasswordForPassenger";
 import RequestScreen from "./src/Screens/RequestScreen";
 import DestinationScreen from "./src/Screens/DestinationScreen";
 import DriverScreen from "./src/Screens/DriverScreen";
@@ -23,17 +24,23 @@ import OfferingCarpool from "./src/Screens/OfferingCarpool";
 import ReservingCarpool from "./src/Screens/ReservingCarpool";
 import AvailableCarpoolsScreen from "./src/Screens/AvailableCarpoolsScreen";
 import BookingConfirmation from "./src/Screens/BookingConfirmation";
-import Settings from "./src/Screens/Settings";
-import Help from "./src/Screens/Help";
-import Safety from "./src/Screens/Safety";
-import Notifications from "./src/Screens/Notifications";
-import Messages from "./src/Screens/Messages";
-import ProfileScreen from "./src/Screens/ProfileScreen";
+import SettingsDriver from "./src/Screens/SettingsDriver";
+import SettingsPassenger from "./src/Screens/SettingsPassenger";
+import DriverHelp from "./src/Screens/DriverHelp";
+import HelpPassenger from "./src/Screens/HelpPassenger";
+import SafetyDriver from "./src/Screens/SafetyDriver";
+import SafetyPassenger from "./src/Screens/SafetyPassenger";
+import DriverNotifications from "./src/Screens/DriverNotifications";
+import NotificationsPassenger from "./src/Screens/NotificationsPassenger";
+import MessagesDriver from "./src/Screens/MessagesDriver";
+import MessagesPassenger from "./src/Screens/MessagesPassenger";
+import PassengerProfile from "./src/Screens/PassengerProfile";
+import DriverProfile from "./src/Screens/DriverProfile";
 import VerifyEmailOTP from "./src/Screens/VerifyEmailOTP";
 
-const Stack = createStackNavigator();
 
-// Replace with your real Stripe key
+
+const Stack = createStackNavigator();
 const STRIPE_PUBLISHABLE_KEY = "pk_test_XXXXXXXXXXXXXXXXXXXXXXXX";
 
 export default function App() {
@@ -59,24 +66,38 @@ export default function App() {
             <Stack.Screen name="DestinationScreen" component={DestinationScreen} />
             <Stack.Screen name="DriverScreen" component={DriverScreen} />
             <Stack.Screen name="VerifyEmailOTP" component={VerifyEmailOTP} />
-            <Stack.Screen
-              name="ForgotPassword"
-              component={ForgotPassword}
-            />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
             <Stack.Screen name="OfferingCarpool" component={OfferingCarpool} />
-            <Stack.Screen
-              name="AvailableCarpools"
-              component={AvailableCarpoolsScreen}
-              options={{ title: "Available Carpools", headerBackTitle: "Back" }}
-            />
+            <Stack.Screen name="AvailableCarpools" component={AvailableCarpoolsScreen} />
             <Stack.Screen name="ReservingCarpool" component={ReservingCarpool} />
-            <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-            <Stack.Screen name="Settings" component={Settings} />
-            <Stack.Screen name="Help" component={Help} />
-            <Stack.Screen name="Safety" component={Safety} />
-            <Stack.Screen name="Notifications" component={Notifications} />
-            <Stack.Screen name="Messages" component={Messages} />
-            <Stack.Screen name="ResetPassword" component={ResetPassword} />
+
+            {/* Role-specific Profile Screens */}
+            <Stack.Screen name="PassengerProfile" component={PassengerProfile} />
+            <Stack.Screen name="DriverProfile" component={DriverProfile} />
+
+            {/* Role-specific Messages */}
+            <Stack.Screen name="MessagesDriver" component={MessagesDriver} />
+            <Stack.Screen name="MessagesPassenger" component={MessagesPassenger} />
+
+            {/* Role-specific Notifications */}
+            <Stack.Screen name="DriverNotifications" component={DriverNotifications} />
+            <Stack.Screen name="NotificationsPassenger" component={NotificationsPassenger} />
+
+            {/* Role-specific Safety */}
+            <Stack.Screen name="SafetyDriver" component={SafetyDriver} />
+            <Stack.Screen name="SafetyPassenger" component={SafetyPassenger} />
+
+            {/* Role-specific Settings */}
+            <Stack.Screen name="SettingsDriver" component={SettingsDriver} />
+            <Stack.Screen name="SettingsPassenger" component={SettingsPassenger} />
+
+            {/* Role-specific Help */}
+            <Stack.Screen name="DriverHelp" component={DriverHelp} />
+            <Stack.Screen name="HelpPassenger" component={HelpPassenger} />
+
+            {/* Password Reset */}
+            <Stack.Screen name="ResetPasswordForDriver" component={ResetPasswordForDriver} />
+            <Stack.Screen name="ResetPasswordForPassenger" component={ResetPasswordForPassenger} />
           </Stack.Navigator>
         </NavigationContainer>
       </StripeProvider>

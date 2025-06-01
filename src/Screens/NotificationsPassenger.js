@@ -1,10 +1,10 @@
 
-import { View, Text, StyleSheet, } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
-const Settings = () => {
+const NotificationsPassenger= () => {
   return (
     <View style={styles.container}>
-      <Text>Settings Screen 🛠️</Text>
+      <Text>passenger Notifications 📩</Text>
     </View>
   );
 };
@@ -18,4 +18,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Settings;
+export default NotificationsPassenger;

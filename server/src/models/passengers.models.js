@@ -18,6 +18,10 @@ const passengerSchema = new mongoose.Schema({
     email:{
         type: String,
         required:true
+    },
+    otp:{
+      type: String,
+      default: null,
     }
 }, {
     timestamps: true

@@ -9,10 +9,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api'; // Make sure this path is correct
 
 const ForgotPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
-  const [step, setStep] = useState(1); // Step 1 = email, Step 2 = OTP
+  const [step, setStep] = useState(1);
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -23,15 +24,16 @@ const ForgotPassword = ({ navigation }) => {
     }
 
     setLoading(true);
-
     try {
-      const response = await axios.post('${API_BASE_URL}/api/forgot-password/send-otp', { email });
-      setLoading(false);
+      const response = await axios.post(`${API_BASE_URL}/api/passenger/forgot-password/send-otp`, {
+        email,
+      });
       Alert.alert('Success', response.data.message || 'OTP sent to your email.');
       setStep(2);
     } catch (error) {
-      setLoading(false);
       Alert.alert('Error', error.response?.data?.message || 'Failed to send OTP.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,18 +44,17 @@ const ForgotPassword = ({ navigation }) => {
     }
 
     setLoading(true);
-
     try {
-      const response = await axios.post('${API_BASE_URL}/api/forgot-password/verify-otp', {
+      const response = await axios.post(`${API_BASE_URL}/api/passenger/forgot-password/verify-otp`, {
         email,
         otp,
       });
-      setLoading(false);
       Alert.alert('Success', response.data.message || 'OTP Verified');
       navigation.navigate('ResetPassword', { email });
     } catch (error) {
-      setLoading(false);
       Alert.alert('Error', error.response?.data?.message || 'Invalid OTP. Try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

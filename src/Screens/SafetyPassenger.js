@@ -1,10 +1,10 @@
 
 import { View, Text, StyleSheet, } from 'react-native';
 
-const Safety = () => {
+const SafetyPassenger = () => {
   return (
     <View style={styles.container}>
-      <Text>Messages Screen 📩</Text>
+      <Text>safety passsenger 📩</Text>
     </View>
   );
 };
@@ -18,4 +18,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Safety;
+export default SafetyPassenger;

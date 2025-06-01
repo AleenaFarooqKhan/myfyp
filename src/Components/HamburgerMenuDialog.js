@@ -18,14 +18,43 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const { height: screenHeight } = Dimensions.get("window");
 
-const MENU_ITEMS = [
-  { label: "Home", route: "HomeScreen", icon: <Icon name="home" size={22} color="#333" /> },
-  { label: "Profile", route: "ProfileScreen", icon: <Icon name="account" size={22} color="#333" /> },
-  { label: "Messages", route: "Messages", icon: <FontAwesome name="comments" size={22} color="#333" /> },
-  { label: "Notifications", route: "Notifications", icon: <Feather name="bell" size={22} color="#333" /> },
-  { label: "Safety", route: "Safety", icon: <MaterialIcons name="security" size={22} color="#333" /> },
-  { label: "Settings", route: "Settings", icon: <Feather name="settings" size={22} color="#333" /> },
-  { label: "Help", route: "Help", icon: <Feather name="help-circle" size={22} color="#333" /> },
+// Menu items with role-based route mapping
+const getMenuItems = (role) => [
+  {
+    label: "Home",
+    route: role === "driver" ? "DriverHome" : "PassengerHome",
+    icon: <Icon name="home" size={22} color="#333" />,
+  },
+  {
+    label: "Profile",
+    route: role === "driver" ? "DriverProfile" : "PassengerProfile",
+    icon: <Icon name="account" size={22} color="#333" />,
+  },
+  {
+    label: "Messages",
+    route: role === "driver" ? "DriverMessages" : "PassengerMessages",
+    icon: <FontAwesome name="comments" size={22} color="#333" />,
+  },
+  {
+    label: "Notifications",
+    route: role === "driver" ? "DriverNotifications" : "PassengerNotifications",
+    icon: <Feather name="bell" size={22} color="#333" />,
+  },
+  {
+    label: "Safety",
+    route: role === "driver" ? "DriverSafety" : "PassengerSafety",
+    icon: <MaterialIcons name="security" size={22} color="#333" />,
+  },
+  {
+    label: "Settings",
+    route: role === "driver" ? "DriverSettings" : "PassengerSettings",
+    icon: <Feather name="settings" size={22} color="#333" />,
+  },
+  {
+    label: "Help",
+    route: role === "driver" ? "DriverHelp" : "PassengerHelp",
+    icon: <Feather name="help-circle" size={22} color="#333" />,
+  },
 ];
 
 const HamburgerMenuDialog = ({ visible, onClose }) => {
@@ -36,30 +65,24 @@ const HamburgerMenuDialog = ({ visible, onClose }) => {
 
   useEffect(() => {
     if (visible) {
-      AsyncStorage.getItem("userName").then((name) => {
-        setUserName(name || "User");
-      });
-      AsyncStorage.getItem("userRole").then((role) => {
-        setUserRole(role || "");
-      });
+      AsyncStorage.getItem("userName").then((name) => setUserName(name || "User"));
+      AsyncStorage.getItem("userRole").then((role) => setUserRole(role || ""));
 
-      if (navigation && navigation.getState) {
-        const navState = navigation.getState();
-        if (navState && navState.routes && navState.index !== undefined) {
-          const currentRoute = navState.routes[navState.index].name;
-          const matchedItem = MENU_ITEMS.find((item) => item.route === currentRoute);
-          if (matchedItem) {
-            setSelectedMenuItem(matchedItem.label);
-          } else {
-            setSelectedMenuItem("");
-          }
-        }
-      }
+      // Delay selection to ensure userRole is set
+      setTimeout(() => {
+        const navState = navigation?.getState?.();
+        const currentRoute = navState?.routes?.[navState.index]?.name;
+        const items = getMenuItems(userRole);
+        const matchedItem = items.find((item) => item.route === currentRoute);
+        setSelectedMenuItem(matchedItem?.label || "");
+      }, 100);
     }
-  }, [visible]);
+  }, [visible, userRole]);
 
   const handleMenuPress = (label) => {
-    const item = MENU_ITEMS.find((m) => m.label === label);
+    const items = getMenuItems(userRole);
+    const item = items.find((m) => m.label === label);
+
     if (item && navigation) {
       const navState = navigation.getState();
       const currentRoute = navState?.routes?.[navState.index]?.name;
@@ -84,17 +107,14 @@ const HamburgerMenuDialog = ({ visible, onClose }) => {
             try {
               await AsyncStorage.removeItem("userName");
               await AsyncStorage.removeItem("userRole");
-              const role = userRole;
-
               navigation.reset({
                 index: 0,
                 routes: [
                   {
-                    name: role === "driver" ? "LoginAsDriver" : "LoginAsPassenger",
+                    name: userRole === "driver" ? "LoginAsDriver" : "LoginAsPassenger",
                   },
                 ],
               });
-
               onClose();
             } catch (error) {
               console.error("Error logging out:", error);
@@ -106,25 +126,35 @@ const HamburgerMenuDialog = ({ visible, onClose }) => {
     );
   };
 
+  const menuItems = getMenuItems(userRole);
+
   return (
-    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose} statusBarTranslucent={true}>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+      statusBarTranslucent={true}
+    >
       <View style={styles.overlay}>
-        <TouchableOpacity style={styles.transparentBackground} activeOpacity={1} onPress={onClose} />
+        <TouchableOpacity
+          style={styles.transparentBackground}
+          activeOpacity={1}
+          onPress={onClose}
+        />
         <View style={styles.dialogContainer}>
-          {/* Back icon at top left */}
           <TouchableOpacity
             onPress={onClose}
-            style={{
-              position: "absolute",
-              top: 10,
-              left: 10,
-            }}
+            style={{ position: "absolute", top: 10, left: 10 }}
           >
             <Feather name="arrow-left" size={28} color="#000" />
           </TouchableOpacity>
 
           <View style={styles.profileSection}>
-            <Image source={require("../../assets/profile.jpg")} style={styles.profileImage} />
+            <Image
+              source={require("../../assets/profile.jpg")}
+              style={styles.profileImage}
+            />
             <Text style={styles.profileName}>{userName}</Text>
             <View style={styles.ratingRow}>
               <Icon name="star" color="#FFD700" size={18} />
@@ -134,7 +164,7 @@ const HamburgerMenuDialog = ({ visible, onClose }) => {
           </View>
 
           <View style={styles.menuList}>
-            {MENU_ITEMS.map((item) => {
+            {menuItems.map((item) => {
               const isSelected = item.label === selectedMenuItem;
               return (
                 <TouchableOpacity
@@ -181,7 +211,6 @@ const styles = StyleSheet.create({
   },
   transparentBackground: {
     flex: 1,
-    
   },
   dialogContainer: {
     left: -110,
@@ -285,7 +314,6 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     borderRadius: 8,
     justifyContent: "center",
-    marginTop: 0,
     marginBottom: 3,
   },
   logoutText: {

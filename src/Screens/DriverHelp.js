@@ -1,10 +1,10 @@
 
 import { View, Text, StyleSheet, } from 'react-native';
 
-const Help = () => {
+const DriverHelp = () => {
   return (
     <View style={styles.container}>
-      <Text>Messages Screen 📩</Text>
+      <Text>help driver 📩</Text>
     </View>
   );
 };
@@ -18,4 +18,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Help;
+export default DriverHelp;

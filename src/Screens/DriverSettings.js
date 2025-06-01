@@ -1,7 +1,7 @@
 // SettingsScreen.js
 import { Text, View } from 'react-native';
 
-const SettingsScreen = () => {
+const SettingsDriver = () => {
   return (
     <View>
       <Text>Settings Screen</Text>
@@ -9,4 +9,4 @@ const SettingsScreen = () => {
   );
 };
 
-export default SettingsScreen;
+export default SettingsDriver;

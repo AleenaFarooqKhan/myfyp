@@ -1,33 +1,33 @@
 import { driverModels } from "../models/drivers.models.js";
-// import { registrationEmail } from "../services/Mailer.js";
+// import { registrationEmail, otpEmail } from "../services/Mailer.js";
 import { uploadOnCloudinary } from "../services/uploadOnCloudinary.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+
 export const registerDriver = async (req, res) => {
   try {
-    console.log(req.body);
     const {
       firstName,
       lastName,
       password,
       phoneNumber,
-      email, // 
+      email,
       dob,
       licenseNumber,
       vehicleType,
-      iban
+      iban,
     } = req.body;
-     console.log(req.body);
+
     if (
       !firstName ||
       !lastName ||
       !password ||
       !phoneNumber ||
-      !email || // ✅ Added to validation
+      !email ||
       !dob ||
-      !licenseNumber 
-      // !vehicleType
+      !licenseNumber
     ) {
       return res.status(400).json({ message: "Details missing" });
     }
@@ -49,36 +49,28 @@ export const registerDriver = async (req, res) => {
       !files.vehicleFrontPicture ||
       !files.licenseCertificatePicture
     ) {
-      console.log("error 3");
       return res.status(400).json({ message: "All files are required" });
     }
 
-    const profilePath = files.profilePicture[0].path;
-    const vehicleFrontPicture = files.vehicleFrontPicture[0].path;
-    const licenseCertificatePicture = files.licenseCertificatePicture[0].path;
-
     const profileUpload = await uploadOnCloudinary(
-      profilePath,
+      files.profilePicture[0].path,
       "roam/drivers/profilePictures"
     );
     const vehicleFrontPictureUpload = await uploadOnCloudinary(
-      vehicleFrontPicture,
+      files.vehicleFrontPicture[0].path,
       "roam/drivers/vehicleFrontPictures"
     );
     const licenseCertificatePictureUpload = await uploadOnCloudinary(
-      licenseCertificatePicture,
+      files.licenseCertificatePicture[0].path,
       "roam/drivers/vehicleBackPictures"
     );
 
-    // ✅ VehicleType Normalization
+    // Normalize vehicle type
     let normalizedVehicleType = "other";
     const miniCars = ["mehran", "alto", "cultus"];
     const standardCars = ["civic", "corolla xli", "corolla gli"];
-    if (miniCars.includes(vehicleType.toLowerCase())) {
-      normalizedVehicleType = "mini";
-    } else if (standardCars.includes(vehicleType.toLowerCase())) {
-      normalizedVehicleType = "standard";
-    }
+    if (miniCars.includes(vehicleType.toLowerCase())) normalizedVehicleType = "mini";
+    else if (standardCars.includes(vehicleType.toLowerCase())) normalizedVehicleType = "standard";
 
     const newDriver = await driverModels.create({
       firstName,
@@ -86,7 +78,7 @@ export const registerDriver = async (req, res) => {
       password: hashedPassword,
       phoneNumber,
       email,
-      iban, 
+      iban,
       dob: new Date(dob),
       licenseNumber,
       vehicleType: normalizedVehicleType,
@@ -96,17 +88,15 @@ export const registerDriver = async (req, res) => {
       status: "pending",
     });
 
-    // registrationEmail(email, firstName);
+    // registrationEmail(email, firstName); // Optional email send on registration
+
     res.status(200).json({
       message: "Registration complete. You can login after approval",
       newDriver,
     });
   } catch (error) {
-    console.log(error.message);
-    console.log("error 4");
+    console.error("Register error:", error);
     res.status(500).json({ message: "Internal server error" });
-  }finally{
-    console.log("uhu")
   }
 };
 
@@ -135,15 +125,13 @@ export const signInDriver = async (req, res) => {
       expiresIn: "10d",
     });
 
-    const options = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ✅ Works for dev/prod
-    };
-
     res
       .status(200)
-      .cookie("token", token, options)
-      .json({ message: "Driver Logged In", driver, token }); // ✅ Optionally return token
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      })
+      .json({ message: "Driver Logged In", driver, token });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal server error", success: false });
@@ -152,13 +140,12 @@ export const signInDriver = async (req, res) => {
 
 export const logOutDriver = async (req, res) => {
   try {
-    const options = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ✅
-    };
     res
       .status(200)
-      .clearCookie("token", options)
+      .clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      })
       .json({ message: "Driver logged out" });
   } catch (error) {
     console.error("Logout error:", error);
@@ -177,9 +164,90 @@ export const getAllDrivers = async (req, res) => {
 
 export const getPendingDrivers = async (req, res) => {
   try {
-    const pendingDrivers = await driverModels.find({ status: "pending" });
+    const pendingDrivers = await drivermodels.find({ status: "pending" });
     res.status(200).json({ totalDrivers: pendingDrivers.length, pendingDrivers });
   } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const sendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    const user = await drivermodels.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const otp = generateOTP();
+    const expires = new Date(Date.now() + 10 * 60 * 1000); // expires in 10 mins
+
+    user.otp = otp;
+    user.otpExpires = expires;
+    await user.save();
+
+    // await otpEmail(email, user.firstName || "User", otp); // send OTP email
+
+    console.log(`OTP for ${email} is ${otp}`); // For debugging only
+
+    res.status(200).json({ message: "OTP sent successfully" });
+  } catch (error) {
+    console.error("Error sending OTP email:", error);
+    res.status(500).json({ message: "Failed to send OTP" });
+  }
+};
+
+export const verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
+
+    const user = await driversmodels.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!user.otp || !user.otpExpires) {
+      return res.status(400).json({ message: "OTP not requested" });
+    }
+
+    if (user.otpExpires < new Date()) {
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    // OTP verified, clear it
+    user.otp = null;
+    user.otpExpires = null;
+    await user.save();
+
+    res.status(200).json({ message: "OTP verified" });
+  } catch (error) {
+    console.error("OTP verification error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).json({ message: "Email and password are required" });
+
+    const user = await driversmodels.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    user.password = hashedPassword;
+    user.otp = null;
+    user.otpExpires = null;
+
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.error("Password reset error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
