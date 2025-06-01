@@ -24,16 +24,16 @@ import OfferingCarpool from "./src/Screens/OfferingCarpool";
 import ReservingCarpool from "./src/Screens/ReservingCarpool";
 import AvailableCarpoolsScreen from "./src/Screens/AvailableCarpoolsScreen";
 import BookingConfirmation from "./src/Screens/BookingConfirmation";
-import SettingsDriver from "./src/Screens/SettingsDriver";
-import SettingsPassenger from "./src/Screens/SettingsPassenger";
+import DriverSettings from "./src/Screens/DriverSettings";
+import PassengerSettings from "./src/Screens/SettingsPassenger";
 import DriverHelp from "./src/Screens/DriverHelp";
-import HelpPassenger from "./src/Screens/HelpPassenger";
-import SafetyDriver from "./src/Screens/SafetyDriver";
-import SafetyPassenger from "./src/Screens/SafetyPassenger";
+import PassengerHelp from "./src/Screens/PassengerHelp";
+import DriverSafety from "./src/Screens/DriverSafety";
+import PassengerSafety from "./src/Screens/PassengerSafety";
 import DriverNotifications from "./src/Screens/DriverNotifications";
-import NotificationsPassenger from "./src/Screens/NotificationsPassenger";
-import MessagesDriver from "./src/Screens/MessagesDriver";
-import MessagesPassenger from "./src/Screens/MessagesPassenger";
+import PassengerNotifications from "./src/Screens/PassengerNotifications";
+import DriverMessages from "./src/Screens/DriverMessages";
+import PassengerMessages from "./src/Screens/PassengerMessages";
 import PassengerProfile from "./src/Screens/PassengerProfile";
 import DriverProfile from "./src/Screens/DriverProfile";
 import VerifyEmailOTP from "./src/Screens/VerifyEmailOTP";
@@ -76,24 +76,24 @@ export default function App() {
             <Stack.Screen name="DriverProfile" component={DriverProfile} />
 
             {/* Role-specific Messages */}
-            <Stack.Screen name="MessagesDriver" component={MessagesDriver} />
-            <Stack.Screen name="MessagesPassenger" component={MessagesPassenger} />
+            <Stack.Screen name="DriverMessages" component={DriverMessages} />
+            <Stack.Screen name="PassengerMessages" component={PassengerMessages} />
 
             {/* Role-specific Notifications */}
             <Stack.Screen name="DriverNotifications" component={DriverNotifications} />
-            <Stack.Screen name="NotificationsPassenger" component={NotificationsPassenger} />
+            <Stack.Screen name="PassengerNotifications" component={PassengerNotifications} />
 
             {/* Role-specific Safety */}
-            <Stack.Screen name="SafetyDriver" component={SafetyDriver} />
-            <Stack.Screen name="SafetyPassenger" component={SafetyPassenger} />
+            <Stack.Screen name="DriverSafety" component={DriverSafety} />
+            <Stack.Screen name="PassengerSafety" component={PassengerSafety} />
 
             {/* Role-specific Settings */}
-            <Stack.Screen name="SettingsDriver" component={SettingsDriver} />
-            <Stack.Screen name="SettingsPassenger" component={SettingsPassenger} />
+            <Stack.Screen name="DriverSettings" component={DriverSettings} />
+            <Stack.Screen name="PassengerSettings" component={PassengerSettings} />
 
             {/* Role-specific Help */}
             <Stack.Screen name="DriverHelp" component={DriverHelp} />
-            <Stack.Screen name="HelpPassenger" component={HelpPassenger} />
+            <Stack.Screen name="PassengerHelp" component={PassengerHelp} />
 
             {/* Password Reset */}
             <Stack.Screen name="ResetPasswordForDriver" component={ResetPasswordForDriver} />
