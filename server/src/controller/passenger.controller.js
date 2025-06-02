@@ -117,30 +117,34 @@ export const allPassengers = async (req, res) => {
   }
 };
 
-// Get passenger profile
 export const getProfile = async (req, res) => {
+  console.log("GET /:userId/profile controller called"); // add this
+
   try {
-    const passenger = await passengerModel
-      .findById(req.user.id)
-      .select("-password -userOTP");
+    console.log(req.params);
+    const { userId } = req.params;
+    const passenger = await passengerModel.findById(userId);
 
     if (!passenger) {
       return res.status(404).json({ message: "Passenger not found" });
     }
 
-    res.status(200).json(passenger);
+    res.status(200).json({ passenger }); // ✅ important fix
   } catch (error) {
-    console.log(error.message);
+    console.log("Error:", error.message);
     res.status(500).json({ message: "Internal server error" });
+  } finally {
+    console.log("I really worked?");
   }
 };
 
 // Update passenger profile
 export const updateProfile = async (req, res) => {
   try {
+    const { userId } = req.params;
     const { username, email, phoneNumber } = req.body;
 
-    const passenger = await passengerModel.findById(req.user.id);
+    const passenger = await passengerModel.findById(userId);
     if (!passenger) {
       return res.status(404).json({ message: "Passenger not found" });
     }
@@ -151,7 +155,9 @@ export const updateProfile = async (req, res) => {
 
     await passenger.save();
 
-    res.status(200).json({ message: "Profile updated successfully" });
+    res
+      .status(200)
+      .json({ message: "Profile updated successfully", success: true });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -242,4 +248,3 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-

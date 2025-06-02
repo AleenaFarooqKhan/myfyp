@@ -30,8 +30,6 @@ import {
   resetPassword as resetPassengerPassword,
 } from "../controller/passenger.controller.js";
 
-import pkg from 'jsonwebtoken';
-const { verify } = pkg;
 
 const userRouter = Router();
 const driverRouter = Router();
@@ -74,8 +72,8 @@ passengerRouter.route("/register").post(registerPassenger);
 passengerRouter.route("/login").post(loginPassenger);
 passengerRouter.route("/logout").post(logOutPassenger);
 passengerRouter.route("/all-passengers").get(allPassengers);
-passengerRouter.route("/profile").get(getProfile);
-passengerRouter.route("/profile").put(updateProfile);
+passengerRouter.route("/:userId/profile").get(getProfile);
+passengerRouter.route("/:userId/update-profile").patch(updateProfile);
 passengerRouter.route('/send-otp').post(sendPassengerOTP);
 passengerRouter.route('/verify-otp').post(verifyPassengerOTP);
 passengerRouter.route('/reset-password').post(resetPassengerPassword);
