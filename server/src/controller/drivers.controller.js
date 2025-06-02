@@ -1,10 +1,12 @@
 import { driverModels } from "../models/drivers.models.js";
+import { otpEmail } from "../services/mailer.js";
 // import { registrationEmail, otpEmail } from "../services/Mailer.js";
 import { uploadOnCloudinary } from "../services/uploadOnCloudinary.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+const generateOTP = () =>
+  Math.floor(100000 + Math.random() * 900000).toString();
 
 export const registerDriver = async (req, res) => {
   try {
@@ -37,7 +39,9 @@ export const registerDriver = async (req, res) => {
     });
 
     if (existingDriver) {
-      return res.status(407).json({ message: "Phone number or E-mail already exists" });
+      return res
+        .status(407)
+        .json({ message: "Phone number or E-mail already exists" });
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
@@ -69,8 +73,10 @@ export const registerDriver = async (req, res) => {
     let normalizedVehicleType = "other";
     const miniCars = ["mehran", "alto", "cultus"];
     const standardCars = ["civic", "corolla xli", "corolla gli"];
-    if (miniCars.includes(vehicleType.toLowerCase())) normalizedVehicleType = "mini";
-    else if (standardCars.includes(vehicleType.toLowerCase())) normalizedVehicleType = "standard";
+    if (miniCars.includes(vehicleType.toLowerCase()))
+      normalizedVehicleType = "mini";
+    else if (standardCars.includes(vehicleType.toLowerCase()))
+      normalizedVehicleType = "standard";
 
     const newDriver = await driverModels.create({
       firstName,
@@ -109,7 +115,9 @@ export const signInDriver = async (req, res) => {
 
     const driver = await driverModels.findOne({ phoneNumber });
     if (!driver) {
-      return res.status(407).json({ message: "Driver not found. Invalid phone number." });
+      return res
+        .status(407)
+        .json({ message: "Driver not found. Invalid phone number." });
     }
 
     const isPasswordValid = await bcryptjs.compare(password, driver.password);
@@ -165,7 +173,9 @@ export const getAllDrivers = async (req, res) => {
 export const getPendingDrivers = async (req, res) => {
   try {
     const pendingDrivers = await drivermodels.find({ status: "pending" });
-    res.status(200).json({ totalDrivers: pendingDrivers.length, pendingDrivers });
+    res
+      .status(200)
+      .json({ totalDrivers: pendingDrivers.length, pendingDrivers });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -176,7 +186,7 @@ export const sendOTP = async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
-    const user = await drivermodels.findOne({ email });
+    const user = await driverModels.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const otp = generateOTP();
@@ -186,9 +196,9 @@ export const sendOTP = async (req, res) => {
     user.otpExpires = expires;
     await user.save();
 
-    // await otpEmail(email, user.firstName || "User", otp); // send OTP email
+    await otpEmail(email, user.firstName || "User", otp);
 
-    console.log(`OTP for ${email} is ${otp}`); // For debugging only
+    console.log(`OTP for ${email} is ${otp}`);
 
     res.status(200).json({ message: "OTP sent successfully" });
   } catch (error) {
@@ -200,12 +210,14 @@ export const sendOTP = async (req, res) => {
 export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
+    if (!email || !otp)
+      return res.status(400).json({ message: "Email and OTP are required" });
 
-    const user = await driversmodels.findOne({ email });
+    const user = await driverModels.findOne({ email });
+    console.log(user)
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user.otp || !user.otpExpires) {
+    if (!user.otp) {
       return res.status(400).json({ message: "OTP not requested" });
     }
 
@@ -233,9 +245,11 @@ export const resetPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password)
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
 
-    const user = await driversmodels.findOne({ email });
+    const user = await driverModels.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const hashedPassword = await bcryptjs.hash(password, 10);

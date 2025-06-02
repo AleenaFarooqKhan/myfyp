@@ -16,7 +16,7 @@ import {
   signInDriver,
   sendOTP as sendDriverOTP,       
   verifyOTP as verifyDriverOTP,   
-  resetPassword as resetDriverPassword, 
+  resetPassword as resetDriverPassword,
 } from "../controller/drivers.controller.js";
 import {
   allPassengers,
@@ -27,7 +27,7 @@ import {
   updateProfile,
   sendOTP as sendPassengerOTP,       
   verifyOTP as verifyPassengerOTP,   
-  resetPassword as resetPassengerPassword, 
+  resetPassword as resetPassengerPassword,
 } from "../controller/passenger.controller.js";
 
 import pkg from 'jsonwebtoken';

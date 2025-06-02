@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Centralized configuration
-export const API_BASE_URL = "http://192.168.100.168:3000";
+export const API_BASE_URL = "http://192.168.1.18:3000";
 
 // Helper to get authentication headers
 export const getAuthHeaders = async () => {

@@ -58,8 +58,8 @@ const driverSchema = new Schema(
     iban: {
       type: String,
       required: true,
-      unique: true,
-      match: /^PK[0-9]{2}[A-Z]{4}[0-9]{16}$/,
+      // unique: true,
+      // match: /^PK[0-9]{2}[A-Z]{4}[0-9]{16}$/,
     },
     otp:{
       type: String,

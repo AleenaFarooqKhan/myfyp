@@ -24,7 +24,7 @@ import OfferingCarpool from "./src/Screens/OfferingCarpool";
 import ReservingCarpool from "./src/Screens/ReservingCarpool";
 import AvailableCarpoolsScreen from "./src/Screens/AvailableCarpoolsScreen";
 import BookingConfirmation from "./src/Screens/BookingConfirmation";
-import SettingsDriver from "./src/Screens/SettingsDriver";
+import SettingsDriver from "./src/Screens/SafetyDriver";
 import SettingsPassenger from "./src/Screens/SettingsPassenger";
 import DriverHelp from "./src/Screens/DriverHelp";
 import HelpPassenger from "./src/Screens/HelpPassenger";

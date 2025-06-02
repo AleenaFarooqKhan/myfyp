@@ -25,7 +25,7 @@ const ForgotPassword = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/passenger/forgot-password/send-otp`, {
+      const response = await axios.post(`${API_BASE_URL}/api/passenger/send-otp`, {
         email,
       });
       Alert.alert('Success', response.data.message || 'OTP sent to your email.');
