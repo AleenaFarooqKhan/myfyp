@@ -1340,7 +1340,7 @@
 
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -1351,17 +1351,35 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import HamburgerMenuDialog from '../Components/HamburgerMenuDialog'; // adjust the import path
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import HamburgerMenuDialog from '../Components/HamburgerMenuDialog'; // adjust path if needed
 
 const DriverScreen = () => {
   const navigation = useNavigation();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [driverId, setDriverId] = useState(null);
+
+  useEffect(() => {
+    const getDriverId = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("user");
+        if (userData) {
+          const parsed = JSON.parse(userData);
+          setDriverId(parsed._id); // adjust if you used a different key like parsed.driverId
+        }
+      } catch (error) {
+        console.error("Error loading driver data", error);
+      }
+    };
+
+    getDriverId();
+  }, []);
 
   return (
     <View style={styles.container}>
-     <StatusBar backgroundColor="#1E90FF" barStyle="light-content" />
+      <StatusBar backgroundColor="#1E90FF" barStyle="light-content" />
 
-      {/* Header with Hamburger Icon */}
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.hamburgerIcon}>
           <Feather name="menu" size={28} color="#333" />
@@ -1369,7 +1387,7 @@ const DriverScreen = () => {
         <Text style={styles.headerTitle}>Driver Dashboard</Text>
       </View>
 
-      {/* Main Content */}
+      {/* View Available Carpools */}
       <TouchableOpacity
         style={styles.card}
         onPress={() => navigation.navigate('AvailableCarpools')}
@@ -1378,6 +1396,7 @@ const DriverScreen = () => {
         <Text style={styles.cardText}>View Available Carpools</Text>
       </TouchableOpacity>
 
+      {/* Create Carpool Offer */}
       <TouchableOpacity
         style={styles.card}
         onPress={() => navigation.navigate('OfferingCarpool')}
@@ -1386,7 +1405,26 @@ const DriverScreen = () => {
         <Text style={styles.cardText}>Create New Carpool Offer</Text>
       </TouchableOpacity>
 
-      {/* Hamburger Menu Modal */}
+      {/* Chat Button */}
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => {
+          const passengerId = "6651fc95e13a05a256d56012"; // Replace with actual selected passenger ID
+          if (driverId) {
+            navigation.navigate("ChatScreen", {
+              currentUser: driverId,
+              otherUser: passengerId,
+            });
+          } else {
+            console.log("Driver ID not loaded");
+          }
+        }}
+      >
+        <Icon name="chat" size={40} color="#4f46e5" />
+        <Text style={styles.cardText}>Chat with Passenger</Text>
+      </TouchableOpacity>
+
+      {/* Hamburger Menu */}
       <HamburgerMenuDialog visible={menuVisible} onClose={() => setMenuVisible(false)} />
     </View>
   );
@@ -1395,7 +1433,7 @@ const DriverScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight || 30, // spacing under status bar
+    paddingTop: StatusBar.currentHeight || 30,
     backgroundColor: '#f3f4f6',
   },
   header: {

@@ -1,4 +1,4 @@
-const SettingsPassenger = () => {
+const PassengerSettings = () => {
   return (
     <View>
       <Text>Settings passenger</Text>
@@ -6,4 +6,4 @@ const SettingsPassenger = () => {
   );
 };
 
-export default SettingsPassenger;
+export default PassengerSettings;

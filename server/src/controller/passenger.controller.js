@@ -19,7 +19,9 @@ export const registerPassenger = async (req, res) => {
     });
 
     if (existingPassenger) {
-      return res.status(400).json({ message: "Phone or email number already taken" });
+      return res
+        .status(400)
+        .json({ message: "Phone or email number already taken" });
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
@@ -55,21 +57,31 @@ export const loginPassenger = async (req, res) => {
       return res.status(404).json({ message: "User does not exist" });
     }
 
-    const isPasswordValid = await bcryptjs.compare(password, passenger.password);
+    const isPasswordValid = await bcryptjs.compare(
+      password,
+      passenger.password
+    );
     if (!isPasswordValid) {
       return res.status(407).json({ message: "Invalid Password" });
     }
 
-    const token = jwt.sign({ id: passenger._id }, process.env.JWT_TOKEN_SECRET, {
-      expiresIn: "5d",
-    });
+    const token = jwt.sign(
+      { id: passenger._id },
+      process.env.JWT_TOKEN_SECRET,
+      {
+        expiresIn: "5d",
+      }
+    );
 
     const options = {
       httpOnly: true,
       secure: true,
     };
 
-    res.status(200).cookie("token", token, options).json({ message: "Passenger logged in", passenger });
+    res
+      .status(200)
+      .cookie("token", token, options)
+      .json({ message: "Passenger logged in", passenger });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -84,7 +96,10 @@ export const logOutPassenger = async (req, res) => {
       secure: true,
     };
 
-    res.status(200).clearCookie("token", options).json({ message: "Passenger logged out" });
+    res
+      .status(200)
+      .clearCookie("token", options)
+      .json({ message: "Passenger logged out" });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -102,28 +117,34 @@ export const allPassengers = async (req, res) => {
   }
 };
 
-// Get passenger profile
 export const getProfile = async (req, res) => {
+  console.log("GET /:userId/profile controller called"); // add this
+
   try {
-    const passenger = await passengerModel.findById(req.user.id).select("-password -userOTP");
+    console.log(req.params);
+    const { userId } = req.params;
+    const passenger = await passengerModel.findById(userId);
 
     if (!passenger) {
       return res.status(404).json({ message: "Passenger not found" });
     }
 
-    res.status(200).json(passenger);
+    res.status(200).json({ passenger }); // ✅ important fix
   } catch (error) {
-    console.log(error.message);
+    console.log("Error:", error.message);
     res.status(500).json({ message: "Internal server error" });
+  } finally {
+    console.log("I really worked?");
   }
 };
 
 // Update passenger profile
 export const updateProfile = async (req, res) => {
   try {
+    const { userId } = req.params;
     const { username, email, phoneNumber } = req.body;
 
-    const passenger = await passengerModel.findById(req.user.id);
+    const passenger = await passengerModel.findById(userId);
     if (!passenger) {
       return res.status(404).json({ message: "Passenger not found" });
     }
@@ -134,7 +155,9 @@ export const updateProfile = async (req, res) => {
 
     await passenger.save();
 
-    res.status(200).json({ message: "Profile updated successfully" });
+    res
+      .status(200)
+      .json({ message: "Profile updated successfully", success: true });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -171,7 +194,8 @@ export const sendOTP = async (req, res) => {
 export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
+    if (!email || !otp)
+      return res.status(400).json({ message: "Email and OTP are required" });
 
     const user = await passengerModel.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -204,7 +228,9 @@ export const resetPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password)
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
 
     const user = await passengerModel.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });

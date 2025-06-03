@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,74 +10,68 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_BASE_URL } from '../config/api';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "../config/api";
+import axios from "axios";
 
 const PassengerProfile = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [name, setName] = useState("");
+  const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchProfile();
+    const fetchUserAndProfile = async () => {
+      try {
+        const id = await AsyncStorage.getItem("userId");
+        if (id) {
+          setUserId(id);
+          await fetchProfile(id);
+        }
+      } catch (error) {
+        console.log("Error fetching userId:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserAndProfile();
   }, []);
 
-  const fetchProfile = async () => {
+  const fetchProfile = async (id) => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/passenger/profile`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setName(data.passenger.username || '');
-        setEmail(data.passenger.email || '');
-        setPhone(data.passenger.phoneNumber || '');
-      } else {
-        Alert.alert('Error', data.message || 'Failed to fetch profile');
+      console.log();
+      const response = await axios.get(
+        `${API_BASE_URL}/api/passenger/${id}/profile`
+      );
+      if (response.data && response.data.passenger) {
+        setName(response.data.passenger.username || "");
+        setEmail(response.data.passenger.email || "");
+        setPhone(response.data.passenger.phoneNumber || "");
       }
     } catch (error) {
-      Alert.alert('Error', 'Unable to fetch profile');
-      console.error(error);
-    } finally {
-      setLoading(false);
+      console.log("Error fetching profile:", error.message);
     }
   };
 
   const handleSave = async () => {
     try {
       setLoading(true);
-      const token = await AsyncStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/passenger/profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          username: name,
+      const response = await axios.patch(
+        `${API_BASE_URL}/api/passenger/${userId}/update-profile`,
+        {
           email,
-          phoneNumber: phone,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert('Success', 'Profile updated successfully');
-      } else {
-        Alert.alert('Error', data.message || 'Failed to update profile');
+          name,
+          phone,
+        }
+      );
+      if (response.data) {
+        Alert.alert(response.data.message);
+        setLoading(false);
       }
     } catch (error) {
-      Alert.alert('Error', 'Unable to update profile');
+      Alert.alert("Error", "Unable to update profile");
       console.error(error);
     } finally {
       setLoading(false);
@@ -94,7 +88,7 @@ const PassengerProfile = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={styles.flex}
     >
       <ScrollView contentContainerStyle={styles.container}>
@@ -153,30 +147,30 @@ const PassengerProfile = () => {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-    backgroundColor: '#f2f4f8',
+    backgroundColor: "#f2f4f8",
   },
   loadingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
     flexGrow: 1,
-    alignItems: 'center',
+    alignItems: "center",
     padding: 20,
     paddingTop: 60,
   },
   heading: {
     fontSize: 26,
-    fontWeight: 'bold',
-    color: '#1c1c1c',
+    fontWeight: "bold",
+    color: "#1c1c1c",
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#fff',
-    width: '100%',
+    backgroundColor: "#fff",
+    width: "100%",
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 6,
@@ -187,30 +181,30 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#555',
+    color: "#555",
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     borderRadius: 8,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderWidth: 1,
     paddingVertical: 12,
     paddingHorizontal: 14,
     fontSize: 16,
-    color: '#000',
+    color: "#000",
   },
   saveButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     marginTop: 24,
     borderRadius: 25,
     paddingVertical: 14,
-    alignItems: 'center',
+    alignItems: "center",
   },
   saveButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

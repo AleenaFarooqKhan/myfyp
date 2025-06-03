@@ -1,7 +1,7 @@
 
 import { View, Text, StyleSheet, } from 'react-native';
 
-const SafetyDriver = () => {
+const DriverSafety = () => {
   return (
     <View style={styles.container}>
       <Text>safet driver 📩</Text>
@@ -18,4 +18,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SafetyDriver;
+export default DriverSafety;

@@ -11,73 +11,68 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import { API_BASE_URL } from '../config/api'; // Adjust the import path as needed
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
-const ProfileScreenForDriver = () => {
+const DriverProfile = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Fetch profile data on mount
   useEffect(() => {
     fetchProfile();
   }, []);
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/Driver/profile`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          // Authorization: `Bearer ${token}`, if needed
-        },
-      });
-      const data = await response.json();
+      const id = await AsyncStorage.getItem('userId');
+      if (!id) return;
 
-      if (response.ok) {
-        setName(data.driver.username || '');
-        setEmail(data.driver.email || '');
-        setPhone(data.driver.phoneNumber || '');
+      // Corrected backend GET endpoint
+      const response = await axios.get(`${API_BASE_URL}/api/driver/profile/${id}`);
+
+      if (response.data && response.data.driver) {
+        const { username, email, phoneNumber } = response.data.driver;
+        setName(username || '');
+        setEmail(email || '');
+        setPhone(phoneNumber || '');
       } else {
-        Alert.alert('Error', data.message || 'Failed to fetch profile');
+        Alert.alert('Error', 'Driver data not found');
       }
     } catch (error) {
-      Alert.alert('Error', 'Unable to fetch profile');
       console.error(error);
+      Alert.alert('Error', 'Unable to fetch profile');
     } finally {
       setLoading(false);
     }
   };
 
   const handleSave = async () => {
+    if (!name || !email || !phone) {
+      Alert.alert('Validation Error', 'Please fill out all fields.');
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/driver/profile`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          // Authorization: `Bearer ${token}`, if needed
-        },
-        body: JSON.stringify({
-          username: name,
-          email,
-          phoneNumber: phone,
-        }),
+      const id = await AsyncStorage.getItem('userId');
+      if (!id) return;
+
+      // Corrected backend PATCH endpoint
+      const response = await axios.patch(`${API_BASE_URL}/api/driver/update-profile/${id}`, {
+        username: name,
+        email,
+        phoneNumber: phone,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert('Success', 'Profile updated successfully');
-      } else {
-        Alert.alert('Error', data.message || 'Failed to update profile');
+      if (response.data) {
+        Alert.alert('Success', response.data.message || 'Profile updated successfully');
       }
     } catch (error) {
-      Alert.alert('Error', 'Unable to update profile');
       console.error(error);
+      Alert.alert('Error', 'Unable to update profile');
     } finally {
       setLoading(false);
     }
@@ -140,6 +135,7 @@ const ProfileScreenForDriver = () => {
             style={styles.saveButton}
             onPress={handleSave}
             activeOpacity={0.8}
+            disabled={loading}
           >
             <Text style={styles.saveButtonText}>Save Changes</Text>
           </TouchableOpacity>
@@ -213,4 +209,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreenForDriver;
+export default DriverProfile;

@@ -14,24 +14,23 @@ import {
   logOutDriver,
   registerDriver,
   signInDriver,
-  sendOTP as sendDriverOTP,       
-  verifyOTP as verifyDriverOTP,   
-  resetPassword as resetDriverPassword, 
+  getProfile as getDriverProfile,
+  updateProfile as updateDriverProfile,
+  sendOTP as sendDriverOTP,
+  verifyOTP as verifyDriverOTP,
+  resetPassword as resetDriverPassword,
 } from "../controller/drivers.controller.js";
 import {
   allPassengers,
   loginPassenger,
   logOutPassenger,
   registerPassenger,
-  getProfile,   
-  updateProfile,
-  sendOTP as sendPassengerOTP,       
-  verifyOTP as verifyPassengerOTP,   
-  resetPassword as resetPassengerPassword, 
+  getProfile as getPassengerProfile,
+  updateProfile as updatePassengerProfile,
+  sendOTP as sendPassengerOTP,
+  verifyOTP as verifyPassengerOTP,
+  resetPassword as resetPassengerPassword,
 } from "../controller/passenger.controller.js";
-
-import pkg from 'jsonwebtoken';
-const { verify } = pkg;
 
 const userRouter = Router();
 const driverRouter = Router();
@@ -64,9 +63,11 @@ driverRouter.route("/login").post(signInDriver);
 driverRouter.route("/logout").post(logOutDriver);
 driverRouter.route("/approved-drivers").get(getAllDrivers);
 driverRouter.route("/pending-drivers").get(getPendingDrivers);
-driverRouter.route('/send-otp').post(sendDriverOTP);
-driverRouter.route('/verify-otp').post(verifyDriverOTP);
-driverRouter.route('/reset-password').post(resetDriverPassword);
+driverRouter.route("/send-otp").post(sendDriverOTP);
+driverRouter.route("/verify-otp").post(verifyDriverOTP);
+driverRouter.route("/reset-password").post(resetDriverPassword);
+driverRouter.route("/:userId/profile").get(getDriverProfile);
+driverRouter.route("/:userId/update-profile").patch(updateDriverProfile);
 export { driverRouter };
 
 // Passenger routes
@@ -74,9 +75,9 @@ passengerRouter.route("/register").post(registerPassenger);
 passengerRouter.route("/login").post(loginPassenger);
 passengerRouter.route("/logout").post(logOutPassenger);
 passengerRouter.route("/all-passengers").get(allPassengers);
-passengerRouter.route("/profile").get(getProfile);
-passengerRouter.route("/profile").put(updateProfile);
-passengerRouter.route('/send-otp').post(sendPassengerOTP);
-passengerRouter.route('/verify-otp').post(verifyPassengerOTP);
-passengerRouter.route('/reset-password').post(resetPassengerPassword);
+passengerRouter.route("/:userId/profile").get(getPassengerProfile);
+passengerRouter.route("/:userId/update-profile").patch(updatePassengerProfile);
+passengerRouter.route("/send-otp").post(sendPassengerOTP);
+passengerRouter.route("/verify-otp").post(verifyPassengerOTP);
+passengerRouter.route("/reset-password").post(resetPassengerPassword);
 export { passengerRouter };

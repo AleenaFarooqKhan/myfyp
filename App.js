@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { LocationProviders } from "./src/Context/Context";
 import { StripeProvider } from "@stripe/stripe-react-native";
+import ChatScreen from "./src/Screens/ChatScreen";  // <-- Corrected import here
 
 // Import your screens including role-specific ones
 import SplashScreen from "./src/Screens/SplashScreen";
@@ -25,7 +26,7 @@ import ReservingCarpool from "./src/Screens/ReservingCarpool";
 import AvailableCarpoolsScreen from "./src/Screens/AvailableCarpoolsScreen";
 import BookingConfirmation from "./src/Screens/BookingConfirmation";
 import DriverSettings from "./src/Screens/DriverSettings";
-import PassengerSettings from "./src/Screens/SettingsPassenger";
+import PassengerSettings from "./src/Screens/PassengerSettings";
 import DriverHelp from "./src/Screens/DriverHelp";
 import PassengerHelp from "./src/Screens/PassengerHelp";
 import DriverSafety from "./src/Screens/DriverSafety";
@@ -37,8 +38,6 @@ import PassengerMessages from "./src/Screens/PassengerMessages";
 import PassengerProfile from "./src/Screens/PassengerProfile";
 import DriverProfile from "./src/Screens/DriverProfile";
 import VerifyEmailOTP from "./src/Screens/VerifyEmailOTP";
-
-
 
 const Stack = createStackNavigator();
 const STRIPE_PUBLISHABLE_KEY = "pk_test_XXXXXXXXXXXXXXXXXXXXXXXX";
@@ -70,31 +69,25 @@ export default function App() {
             <Stack.Screen name="OfferingCarpool" component={OfferingCarpool} />
             <Stack.Screen name="AvailableCarpools" component={AvailableCarpoolsScreen} />
             <Stack.Screen name="ReservingCarpool" component={ReservingCarpool} />
-
+            <Stack.Screen name="ChatScreen" component={ChatScreen} />
             {/* Role-specific Profile Screens */}
             <Stack.Screen name="PassengerProfile" component={PassengerProfile} />
             <Stack.Screen name="DriverProfile" component={DriverProfile} />
-
             {/* Role-specific Messages */}
             <Stack.Screen name="DriverMessages" component={DriverMessages} />
             <Stack.Screen name="PassengerMessages" component={PassengerMessages} />
-
             {/* Role-specific Notifications */}
             <Stack.Screen name="DriverNotifications" component={DriverNotifications} />
             <Stack.Screen name="PassengerNotifications" component={PassengerNotifications} />
-
             {/* Role-specific Safety */}
             <Stack.Screen name="DriverSafety" component={DriverSafety} />
             <Stack.Screen name="PassengerSafety" component={PassengerSafety} />
-
             {/* Role-specific Settings */}
             <Stack.Screen name="DriverSettings" component={DriverSettings} />
             <Stack.Screen name="PassengerSettings" component={PassengerSettings} />
-
             {/* Role-specific Help */}
             <Stack.Screen name="DriverHelp" component={DriverHelp} />
             <Stack.Screen name="PassengerHelp" component={PassengerHelp} />
-
             {/* Password Reset */}
             <Stack.Screen name="ResetPasswordForDriver" component={ResetPasswordForDriver} />
             <Stack.Screen name="ResetPasswordForPassenger" component={ResetPasswordForPassenger} />
