@@ -27,7 +27,7 @@ const ForgotPassword = ({ navigation }) => {
 
     try {
       const response = await axios.post(
-        `{API_BASE_URL}/api/driver/send-otp`,
+        `http://192.168.1.14:3000/api/driver/send-otp`,
         { email }
       );
       setLoading(false);
@@ -41,13 +41,13 @@ const ForgotPassword = ({ navigation }) => {
       setLoading(false);
       Alert.alert(
         "Error",
-        error.response?.data?.message || "Failed to send OTP."
+        error.response?.data?.message || "Failed to send OTP. !!"
       );
     }
   };
 
   const handleVerifyOTP = async () => {
-    console.log('aaa')
+    console.log("aaa");
     if (!otp || otp.length !== 6) {
       Alert.alert("Error", "Please enter a valid 6-digit OTP.");
       return;
@@ -56,9 +56,9 @@ const ForgotPassword = ({ navigation }) => {
     setLoading(true);
 
     try {
-      console.log(email)
+      console.log(email);
       const response = await axios.post(
-        `http://192.168.1.18:3000/api/driver/verify-otp`,
+        `http://192.168.1.14:3000/api/driver/verify-otp`,
         { email, otp }
       );
 

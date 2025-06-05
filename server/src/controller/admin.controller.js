@@ -97,10 +97,7 @@ export const approveDriver = async (req, res) => {
     }
     driver.status = "approved";
     await driver.save();
-    approvalEmail
-      (driver.email,
-      driver.fullName,
-    )
+    approvalEmail(driver.email, driver.fullName);
     return res.status(200).json({ message: "driver approved", driver });
   } catch (error) {
     console.log("approval error:", error);
@@ -118,10 +115,7 @@ export const rejectDriver = async (req, res) => {
     if (!driver) {
       return res.status(404).json({ message: "No driver found" });
     }
-    rejectionEmail(
-      driver.email,
-      driver.fullName,
-    )
+    rejectionEmail(driver.email, driver.fullName);
     return res.status(200).json({ message: "Driver Deleted", driver });
   } catch (error) {
     console.error("Rejecting error:", error);
@@ -132,6 +126,25 @@ export const getAllAdmins = async (req, res) => {
   try {
     const admins = await adminsModel.find();
     res.status(200).json({ admins });
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const sendMessageToDriver = async (req, res) => {
+  try {
+    const { message, driverId } = req.body;
+    if (!message || !driverId ) {
+      return res.status(400).json({ message: "Details missings" });
+    }
+    const driver = await driverModels.findById(driverId);
+    if (!driver) {
+      return res.status(404).json({ message: "Driver not found" });
+    }
+    driver.adminMessages.push({
+      message,
+    });
+    await driver.save();
+    return res.status(200).json({ message: "Message sent", message });
   } catch (error) {
     console.log(error);
   }

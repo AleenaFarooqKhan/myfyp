@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,52 +7,70 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
-} from 'react-native';
-import axios from 'axios';
-import { API_BASE_URL } from '../config/api'; // Make sure this path is correct
+} from "react-native";
+import axios from "axios";
+import { API_BASE_URL } from "../config/api"; // Make sure this path is correct
 
 const ForgotPassword = ({ navigation }) => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [step, setStep] = useState(1);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-
   const handleSendOTP = async () => {
     if (!email) {
-      Alert.alert('Error', 'Please enter your email.');
+      Alert.alert("Error", "Please enter your email.");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/passenger/send-otp`, {
-        email,
-      });
-      Alert.alert('Success', response.data.message || 'OTP sent to your email.');
+      console.log("Sending OTP...");
+      const response = await axios.post(
+        `http://192.168.1.14:3000/api/passenger/send-otp`,
+        {
+          email,
+        }
+      );
+      console.log("OTP sent:", response.data);
+      Alert.alert(
+        "Success",
+        response.data.message || "OTP sent to your email."
+      );
       setStep(2);
     } catch (error) {
-      Alert.alert('Error', error.response?.data?.message || 'Failed to send OTP.');
+      console.log("error object:", error);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Failed to send OTP. !!!"
+      );
     } finally {
+      console.log("finally block executed");
       setLoading(false);
     }
   };
 
   const handleVerifyOTP = async () => {
     if (!otp || otp.length !== 6) {
-      Alert.alert('Error', 'Please enter a valid 6-digit OTP.');
+      Alert.alert("Error", "Please enter a valid 6-digit OTP.");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/passenger/forgot-password/verify-otp`, {
-        email,
-        otp,
-      });
-      Alert.alert('Success', response.data.message || 'OTP Verified');
-      navigation.navigate('ResetPassword', { email });
+      const response = await axios.post(
+        `${API_BASE_URL}/api/passenger/forgot-password/verify-otp`,
+        {
+          email,
+          otp,
+        }
+      );
+      Alert.alert("Success", response.data.message || "OTP Verified");
+      navigation.navigate("ResetPassword", { email });
     } catch (error) {
-      Alert.alert('Error', error.response?.data?.message || 'Invalid OTP. Try again.');
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Invalid OTP. Try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -89,7 +107,9 @@ const ForgotPassword = ({ navigation }) => {
         </>
       ) : (
         <>
-          <Text style={styles.subtitle}>Enter the 6-digit OTP sent to your email</Text>
+          <Text style={styles.subtitle}>
+            Enter the 6-digit OTP sent to your email
+          </Text>
           <TextInput
             style={styles.input}
             placeholder="Enter OTP"
@@ -122,46 +142,46 @@ export default ForgotPassword;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6FAFF',
-    justifyContent: 'center',
+    backgroundColor: "#F6FAFF",
+    justifyContent: "center",
     paddingHorizontal: 25,
   },
   title: {
     fontSize: 26,
-    fontWeight: 'bold',
-    color: '#007AFF',
+    fontWeight: "bold",
+    color: "#007AFF",
     marginBottom: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 15,
-    color: '#444',
+    color: "#444",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: 10,
   },
   input: {
-    borderColor: '#007AFF',
+    borderColor: "#007AFF",
     borderWidth: 1,
     borderRadius: 10,
     padding: 12,
     marginBottom: 20,
     fontSize: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     padding: 14,
     borderRadius: 10,
-    alignItems: 'center',
-    shadowColor: '#007AFF',
+    alignItems: "center",
+    shadowColor: "#007AFF",
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 3,
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
     fontSize: 16,
   },
 });

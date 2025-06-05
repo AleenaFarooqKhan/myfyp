@@ -29,7 +29,7 @@ const driverSchema = new Schema(
       type: Date,
       required: true,
     },
-    vehicleType :{
+    vehicleType: {
       type: String,
       required: true,
     },
@@ -61,10 +61,16 @@ const driverSchema = new Schema(
       // unique: true,
       // match: /^PK[0-9]{2}[A-Z]{4}[0-9]{16}$/,
     },
-    otp:{
+    otp: {
       type: String,
       default: null,
-    }
+    },
+    adminMessages: [
+      {
+        message: { type: String, required: true },
+        sentAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   {
     timestamps: true,

@@ -29,7 +29,8 @@ export const registerDriver = async (req, res) => {
       !phoneNumber ||
       !email ||
       !dob ||
-      !licenseNumber
+      !licenseNumber ||
+      !vehicleType
     ) {
       return res.status(400).json({ message: "Details missing" });
     }
@@ -288,15 +289,16 @@ export const getProfile = async (req, res) => {
 // Update Driver Profile
 export const updateProfile = async (req, res) => {
   try {
+    console.log(req.params)
     const { userId } = req.params;
-    const { username, email, phoneNumber } = req.body;
+    const { firstName, email, phoneNumber } = req.body;
 
     const driver = await driverModels.findById(userId);
     if (!driver) {
       return res.status(404).json({ message: "Driver not found" });
     }
 
-    if (username) driver.username = username;
+    if (firstName) driver.firstName = firstName;
     if (email) driver.email = email;
     if (phoneNumber) driver.phoneNumber = phoneNumber;
 
@@ -309,6 +311,30 @@ export const updateProfile = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+export const getAllMessages = async (req, res) => {
+  console.log(req.body);
+  try {
+    const { driverId } = req.params;
+    if (!driverId) {
+      return res.status(404).json({ message: "No driver found" });
+    }
+    const driver = await driverModels.findById(driverId);
+    const driverMessages = driver.adminMessages;
+    if (driverMessages.length < 0) {
+      return res.status(400).json({
+        message: "No messages found",
+      });
+    }
+    return res.status(200).json({
+      driverMessages,
+      message: "Result",
+      totalMessages: driverMessages.length,
+    });
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

@@ -6,6 +6,7 @@ import {
   logOut,
   registerAdmin,
   rejectDriver,
+  sendMessageToDriver,
   signIn,
 } from "../controller/admin.controller.js";
 import {
@@ -19,6 +20,7 @@ import {
   sendOTP as sendDriverOTP,
   verifyOTP as verifyDriverOTP,
   resetPassword as resetDriverPassword,
+  getAllMessages,
 } from "../controller/drivers.controller.js";
 import {
   allPassengers,
@@ -31,6 +33,7 @@ import {
   verifyOTP as verifyPassengerOTP,
   resetPassword as resetPassengerPassword,
 } from "../controller/passenger.controller.js";
+
 
 const userRouter = Router();
 const driverRouter = Router();
@@ -48,6 +51,7 @@ userRouter.route("/logout").post(logOut);
 userRouter.route("/approve").post(approveDriver);
 userRouter.route("/reject").post(rejectDriver);
 userRouter.route("/all-admins").get(getAllAdmins);
+userRouter.route("/send-message").post(sendMessageToDriver);
 export { userRouter };
 
 // Driver routes
@@ -68,6 +72,7 @@ driverRouter.route("/verify-otp").post(verifyDriverOTP);
 driverRouter.route("/reset-password").post(resetDriverPassword);
 driverRouter.route("/:userId/profile").get(getDriverProfile);
 driverRouter.route("/:userId/update-profile").patch(updateDriverProfile);
+driverRouter.route("/:driverId/get-messages").get(getAllMessages);
 export { driverRouter };
 
 // Passenger routes

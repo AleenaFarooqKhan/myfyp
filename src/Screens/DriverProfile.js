@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,15 +10,15 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import { API_BASE_URL } from '../config/api';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 const DriverProfile = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,23 +27,25 @@ const DriverProfile = () => {
 
   const fetchProfile = async () => {
     try {
-      const id = await AsyncStorage.getItem('userId');
+      const id = await AsyncStorage.getItem("userId");
       if (!id) return;
 
-      // Corrected backend GET endpoint
-      const response = await axios.get(`${API_BASE_URL}/api/driver/profile/${id}`);
+      console.log("id on profile", id);
+      const response = await axios.get(
+        `${API_BASE_URL}/api/driver/6840342ef3cee1418c62b050/profile`
+      );
 
       if (response.data && response.data.driver) {
-        const { username, email, phoneNumber } = response.data.driver;
-        setName(username || '');
-        setEmail(email || '');
-        setPhone(phoneNumber || '');
+        const { firstName, email, phoneNumber } = response.data.driver;
+        setName(firstName || "");
+        setEmail(email || "");
+        setPhone(phoneNumber || "");
       } else {
-        Alert.alert('Error', 'Driver data not found');
+        Alert.alert("Error", "Driver data not found");
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Unable to fetch profile');
+      Alert.alert("Error", "Unable to fetch profile");
     } finally {
       setLoading(false);
     }
@@ -51,28 +53,34 @@ const DriverProfile = () => {
 
   const handleSave = async () => {
     if (!name || !email || !phone) {
-      Alert.alert('Validation Error', 'Please fill out all fields.');
+      Alert.alert("Validation Error", "Please fill out all fields.");
       return;
     }
 
     try {
       setLoading(true);
-      const id = await AsyncStorage.getItem('userId');
+      const id = await AsyncStorage.getItem("userId");
       if (!id) return;
 
       // Corrected backend PATCH endpoint
-      const response = await axios.patch(`${API_BASE_URL}/api/driver/update-profile/${id}`, {
-        username: name,
-        email,
-        phoneNumber: phone,
-      });
+      const response = await axios.patch(
+        `${API_BASE_URL}/api/driver/6840342ef3cee1418c62b050/update-profile/`,
+        {
+          firstName: name,
+          email,
+          phoneNumber: phone,
+        }
+      );
 
       if (response.data) {
-        Alert.alert('Success', response.data.message || 'Profile updated successfully');
+        Alert.alert(
+          "Success",
+          response.data.message || "Profile updated successfully"
+        ); 
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Unable to update profile');
+      Alert.alert("Error", "Unable to update profile");
     } finally {
       setLoading(false);
     }
@@ -88,7 +96,7 @@ const DriverProfile = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={styles.flex}
     >
       <ScrollView contentContainerStyle={styles.container}>
@@ -148,30 +156,30 @@ const DriverProfile = () => {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-    backgroundColor: '#f2f4f8',
+    backgroundColor: "#f2f4f8",
   },
   loadingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
     flexGrow: 1,
-    alignItems: 'center',
+    alignItems: "center",
     padding: 20,
     paddingTop: 60,
   },
   heading: {
     fontSize: 26,
-    fontWeight: 'bold',
-    color: '#1c1c1c',
+    fontWeight: "bold",
+    color: "#1c1c1c",
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#fff',
-    width: '100%',
+    backgroundColor: "#fff",
+    width: "100%",
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 6,
@@ -182,30 +190,30 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#555',
+    color: "#555",
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     borderRadius: 8,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderWidth: 1,
     paddingVertical: 12,
     paddingHorizontal: 14,
     fontSize: 16,
-    color: '#000',
+    color: "#000",
   },
   saveButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     marginTop: 24,
     borderRadius: 25,
     paddingVertical: 14,
-    alignItems: 'center',
+    alignItems: "center",
   },
   saveButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 
