@@ -27,12 +27,12 @@ const DriverProfile = () => {
 
   const fetchProfile = async () => {
     try {
-      const id = await AsyncStorage.getItem("userId");
+      const id = await AsyncStorage.getItem("driverId");
       if (!id) return;
 
       console.log("id on profile", id);
       const response = await axios.get(
-        `${API_BASE_URL}/api/driver/6840342ef3cee1418c62b050/profile`
+        `${API_BASE_URL}/api/driver/${id}/profile`
       );
 
       if (response.data && response.data.driver) {
@@ -59,12 +59,12 @@ const DriverProfile = () => {
 
     try {
       setLoading(true);
-      const id = await AsyncStorage.getItem("userId");
+      const id = await AsyncStorage.getItem("driverId");
       if (!id) return;
 
       // Corrected backend PATCH endpoint
       const response = await axios.patch(
-        `${API_BASE_URL}/api/driver/6840342ef3cee1418c62b050/update-profile/`,
+        `${API_BASE_URL}/api/driver/${id}/update-profile/`,
         {
           firstName: name,
           email,
@@ -76,7 +76,7 @@ const DriverProfile = () => {
         Alert.alert(
           "Success",
           response.data.message || "Profile updated successfully"
-        ); 
+        );
       }
     } catch (error) {
       console.error(error);

@@ -132,11 +132,11 @@ export const getAllAdmins = async (req, res) => {
 };
 export const sendMessageToDriver = async (req, res) => {
   try {
-    const { message, phoneNumber } = req.body;
-    if (!message || !phoneNumber) {
+    const { message, driverId } = req.body;
+    if (!message || !driverId) {
       return res.status(400).json({ message: "Details missings" });
     }
-    const driver = await driverModels.findOne({ phoneNumber });
+    const driver = await driverModels.findById( driverId );
     if (!driver) {
       return res.status(404).json({ message: "Driver not found" });
     }

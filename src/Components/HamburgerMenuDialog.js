@@ -106,6 +106,7 @@ const HamburgerMenuDialog = ({ visible, onClose }) => {
           onPress: async () => {
             try {
               await AsyncStorage.removeItem("userName");
+              await AsyncStorage.removeItem("driverId");
               await AsyncStorage.removeItem("userRole");
               navigation.reset({
                 index: 0,

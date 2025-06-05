@@ -2,18 +2,19 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "../config/api";
 
 const DriverMessages = () => {
   const [messagesResponse, setMessagesResponse] = useState([]);
 
   const fetchMessages = async () => {
-    const id = await AsyncStorage.getItem("userId");
+    const id = await AsyncStorage.getItem("driverId");
     if (!id) return;
 
     try {
       console.log(id);
       const response = await axios.get(
-        `http://192.168.1.9:3000/api/driver/6840342ef3cee1418c62b050/get-messages`
+        `${API_BASE_URL}/api/driver/${id}/get-messages`
       );
       setMessagesResponse(response.data.driverMessages);
     } catch (error) {

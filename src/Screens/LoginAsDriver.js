@@ -19,7 +19,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Feather from "react-native-vector-icons/Feather";
 import { API_BASE_URL } from "../../src/config/api"; // adjust path if needed
 
-
 const LoginAsDriver = () => {
   const navigation = useNavigation();
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -58,24 +57,25 @@ const LoginAsDriver = () => {
     try {
       console.log("Sending login request for:", phoneNumber);
 
-      const response = await axios.post(
-       `${API_BASE_URL}/api/driver/login`,
-        {
-          phoneNumber,
-          password,
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/api/driver/login`, {
+        phoneNumber,
+        password,
+      });
 
-      console.log("Login response:", JSON.stringify(response.data));
 
-      if (response.data.driver && response.data.message === "Driver Logged In") {
+      if (
+        response.data.driver &&
+        response.data.message === "Driver Logged In"
+      ) {
         const driver = response.data.driver;
-
-        // Assuming no token in response, but can add if exists
+        console.log("driverId", driver._id);
         await Promise.all([
           AsyncStorage.setItem("driverId", driver._id),
           AsyncStorage.setItem("phoneNumber", driver.phoneNumber),
-          AsyncStorage.setItem("userName", `${driver.firstName} ${driver.lastName}`),
+          AsyncStorage.setItem(
+            "userName",
+            `${driver.firstName} ${driver.lastName}`
+          ),
           AsyncStorage.setItem("userRole", "driver"),
         ]);
 
@@ -134,7 +134,10 @@ const LoginAsDriver = () => {
       >
         <View style={styles.topContainer}>
           <StatusBar backgroundColor="#1E90FF" barStyle="light-content" />
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+          >
             <Feather name="arrow-left" size={28} color="#fff" />
           </TouchableOpacity>
 
@@ -157,9 +160,7 @@ const LoginAsDriver = () => {
               keyboardType="phone-pad"
               maxLength={11}
             />
-            {phoneError ? (
-              <Text style={styles.error}>{phoneError}</Text>
-            ) : null}
+            {phoneError ? <Text style={styles.error}>{phoneError}</Text> : null}
 
             <View style={styles.passwordInputContainer}>
               <TextInput
@@ -199,7 +200,9 @@ const LoginAsDriver = () => {
               onPress={() => navigation.navigate("SignUpStep1")}
               disabled={isLoading}
             >
-              <Text style={styles.signupText}>Don't have an account? Sign up</Text>
+              <Text style={styles.signupText}>
+                Don't have an account? Sign up
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
